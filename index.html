@@ -1212,7 +1212,20 @@
                 appPrograms.filter(p => p.status === "Aktif").map(p => `<option value="${p.id}" data-harga="${p.unitPrice}">${p.nama}</option>`).join('');
         }
 
-        function router(viewId) {
+        // Tambahkan fungsi untuk menangkap URL saat pertama kali dibuka
+        function handleInitialRoute() {
+            const path = window.location.pathname.substring(1); // Contoh: "wakaf_quran"
+            if (path) {
+                // Cari program yang ID atau NAMA-nya cocok dengan path
+                const program = appPrograms.find(p => p.nama.toLowerCase().replace(/ /g, '_') === path.toLowerCase());
+                if (program) {
+                    goToDonasi(program.id); // Otomatis buka form donasi untuk program tersebut
+                }
+            }
+        }
+
+        // Ubah fungsi router agar memperbarui URL di browser tanpa reload
+        function router(viewId, pushState = true) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             
@@ -1220,24 +1233,17 @@
             const nav = document.getElementById(`nav-${viewId}`);
             if(nav) nav.classList.add('active');
 
-            if(viewId === 'admin') {
-                if(!isAdmin) {
-                    router('beranda');
-                    return; // Mencegah proses lanjut ke bawah
-                }
+            if (pushState) {
+                window.history.pushState({}, '', '/' + viewId);
             }
-            
-            // 1. Paksa scroll instan
+
+            // Scroll ke atas
             const mainContent = document.getElementById('main-content');
             if (mainContent) mainContent.scrollTop = 0;
-            window.scrollTo(0, 0);
-
-            // 2. Pengaman: Paksa scroll lagi setelah layar selesai mekar (delay 50ms)
-            setTimeout(() => {
-                if (mainContent) mainContent.scrollTop = 0;
-                window.scrollTo(0, 0);
-            }, 50);
         }
+
+        // Panggil di akhir fungsi initApp()
+        // initApp().then(() => handleInitialRoute());
 
         function goToDonasi(progId) {
             router('donasi');
