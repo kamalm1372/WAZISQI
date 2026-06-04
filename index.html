@@ -549,6 +549,14 @@
                 </div>
 
                 <div id="admin-tab-verifikasi" class="hidden space-y-3">
+                    <!-- Kolom Live Search -->
+                    <div class="relative mb-4">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                            <i class="ph-bold ph-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="search-verifikasi" oninput="filterVerifikasi()" placeholder="Cari nama, program, atau nominal/kode unik..." class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none transition-all shadow-sm">
+                    </div>
+                    
                     <div id="admin-list-verifikasi" class="space-y-3"></div>
                 </div>
 
@@ -1668,7 +1676,7 @@
                         const waktuAsli = d.timestamp || d.tanggal || '';
 
                         return `
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
+                        <div class="verifikasi-card bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center transition-all duration-300">
                             <div class="min-w-0">
                                 <p class="font-black text-slate-800 text-sm">${d.nama}</p>
                                 <p class="text-[10px] text-primary font-bold">${d.program}</p>
@@ -1691,6 +1699,9 @@
                         </div>
                     `}).join('');
                 }
+
+                // Panggil ulang pencarian jika admin sudah mengetik sesuatu lalu menekan tombol verifikasi
+                if (typeof filterVerifikasi === 'function') filterVerifikasi();
 
                 const listP = document.getElementById('admin-list-program');
                 listP.innerHTML = appPrograms.map((p, index) => {
@@ -1914,6 +1925,49 @@
             document.getElementById('preview-bukti').src = previewUrl;
             document.getElementById('modal-bukti').classList.remove('hidden');
         }
+
+        function filterVerifikasi() {
+            const input = document.getElementById('search-verifikasi');
+            if (!input) return;
+            
+            const keyword = input.value.toLowerCase();
+            const keywordAngka = keyword.replace(/\D/g, ''); // Ambil murni angkanya saja
+            
+            const cards = document.querySelectorAll('.verifikasi-card');
+            let hasVisibleCard = false;
+            
+            cards.forEach(card => {
+                const teksAsli = card.innerText.toLowerCase();
+                const teksTanpaTitik = teksAsli.replace(/\./g, ''); // Format Rp 100.000 menjadi 100000 agar mudah dicari
+                
+                // Cek pencocokan teks nama/program ATAU pencocokan angka murni/kode unik
+                const cocokTeks = teksAsli.includes(keyword);
+                const cocokAngka = keywordAngka !== "" && teksTanpaTitik.includes(keywordAngka);
+
+                if (cocokTeks || cocokAngka || keyword === "") {
+                    card.style.display = 'flex';
+                    card.classList.remove('hidden-by-search');
+                    hasVisibleCard = true;
+                } else {
+                    card.style.display = 'none';
+                    card.classList.add('hidden-by-search');
+                }
+            });
+
+            // Tampilkan pesan "Data tidak ditemukan" jika hasil filter kosong
+            const listContainer = document.getElementById('admin-list-verifikasi');
+            let noResult = document.getElementById('no-search-result');
+            
+            if (!hasVisibleCard && cards.length > 0) {
+                if (!noResult) {
+                    listContainer.insertAdjacentHTML('beforeend', '<div id="no-search-result" class="text-center p-6 bg-slate-50 rounded-2xl text-slate-500 text-xs italic border border-dashed border-slate-200">Data pencarian tidak ditemukan</div>');
+                } else {
+                    noResult.style.display = 'block';
+                }
+            } else if (noResult) {
+                noResult.style.display = 'none';
+            }
+        }        
 
         function tampilkanSuccessState(){
             document.getElementById('donasi-sukses').classList.add('hidden');
