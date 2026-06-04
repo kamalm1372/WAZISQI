@@ -74,11 +74,6 @@
     </style>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
-    <meta property="og:title" content="WAZISQI - Pondok Pesantren Al-Ittifaqiah">
-    <meta property="og:description" content="Mari berlomba dalam kebaikan. Salurkan amal jariyah, wakaf, dan zakat Anda bersama lembaga resmi WAZISQI Pondok Pesantren Al-Ittifaqiah.">
-    <meta property="og:image" content="https://wazisqi.org/favicon.png">
-    <meta property="og:url" content="https://wazisqi.org">
-    <meta property="og:type" content="website">
 </head>
 <body class="text-slate-800 bg-slate-100 overflow-x-hidden">
 
@@ -616,21 +611,10 @@
                         <i class="ph-fill ph-camera-rotate text-primary text-lg"></i> <span data-i18n="dokPenyaluran">Dokumentasi Penyaluran</span>
                     </h3>
                     
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
-                        <div class="h-32 bg-slate-200 relative">
-                            <img src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=500" class="w-full h-full object-cover">
-                            <div class="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-[9px] font-bold text-slate-700 flex items-center gap-1">
-                                <i class="ph-fill ph-calendar-blank text-primary"></i> 2 Jun 2026
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <span class="text-[9px] font-black text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Wakaf Al-Qur'an</span>
-                            <p class="font-bold text-slate-800 text-sm mt-2 leading-tight">Penyaluran 250 Mushaf untuk Santri Tahfidz</p>
-                            <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">Alhamdulillah, berkat kebaikan para donatur, hari ini telah disalurkan 250 mushaf Al-Qur'an baru untuk santri tahfidz Al-Ittifaqiah.</p>
-                            <div class="mt-3 pt-3 border-t border-slate-100 flex justify-between items-center">
-                                <span class="text-[10px] text-slate-500" data-i18n="danaTersalurkan">Dana Tersalurkan</span>
-                                <span class="text-xs font-bold text-primary">Rp 21.000.000</span>
-                            </div>
+                    <div id="wadah-laporan-dinamis" class="space-y-4 mt-4">
+                        <div class="text-center py-8 text-slate-400">
+                            <i class="ph-bold ph-spinner animate-spin text-3xl mb-2 text-emerald-500"></i>
+                            <p class="text-sm">Memuat data penyaluran...</p>
                         </div>
                     </div>
                 </div>
@@ -2354,6 +2338,65 @@
             document.getElementById('btn-submit-donasi').innerHTML = `<span>${t('btnLanjut')}</span> <i class="ph-bold ph-arrow-right"></i>`;
             document.getElementById('btn-upload-bukti').innerHTML = `<span data-i18n="kirimBukti">${t('kirimBukti')}</span>`;
         }
+
+        // Fungsi menarik data dari Spreadsheet
+        async function muatLaporanPenyaluran() {
+            const wadah = document.getElementById('wadah-laporan-dinamis');
+            if (!wadah) return;
+
+            try {
+                // Memanggil Google Apps Script dengan parameter action=getLaporan
+                const response = await fetch(GAS_URL + '?action=getLaporan');
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    wadah.innerHTML = '<p class="text-center text-sm text-slate-400 py-6">Belum ada data penyaluran saat ini.</p>';
+                    return;
+                }
+
+                let htmlLaporan = '';
+                data.forEach(item => {
+                    // Ubah angka nominal jadi format Rupiah otomatis (Rp)
+                    const formatRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.nominal);
+
+                    htmlLaporan += `
+                    <div class="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm mb-4">
+                        <div class="relative h-48 bg-slate-200">
+                            <img src="${item.foto}" alt="${item.judul}" class="w-full h-full object-cover">
+                            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[10px] font-medium text-slate-700 shadow-sm flex items-center gap-1.5">
+                                <i class="ph-bold ph-calendar-blank text-emerald-600"></i> ${item.tanggal}
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <span class="inline-block px-2 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-bold tracking-wider rounded uppercase mb-2">
+                                ${item.kategori}
+                            </span>
+                            <h4 class="font-bold text-slate-800 text-sm mb-1.5 leading-snug">${item.judul}</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                                ${item.deskripsi}
+                            </p>
+                            <div class="flex justify-between items-center pt-3 border-t border-slate-100">
+                                <span class="text-[10px] text-slate-400 font-medium">Dana Tersalurkan</span>
+                                <span class="font-bold text-emerald-600 text-sm">${formatRupiah}</span>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                });
+
+                // Tampilkan data ke layar
+                wadah.innerHTML = htmlLaporan;
+
+            } catch (error) {
+                console.error('Error memuat laporan:', error);
+                wadah.innerHTML = '<p class="text-center text-sm text-red-400 py-6">Gagal terhubung ke server data. Silakan refresh halaman.</p>';
+            }
+        }
+
+        // Perintahkan aplikasi untuk langsung menyedot data saat pertama kali dibuka
+        document.addEventListener('DOMContentLoaded', () => {
+            muatLaporanPenyaluran();
+        });        
     </script>
 </body>
 </html>
