@@ -4,12 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WAZISQI - Al-Ittifaqiah</title>
+
+    <meta name="title" content="WAZISQI - Pondok Pesantren Al-Ittifaqiah">
+    <meta name="description" content="Mari berlomba dalam kebaikan. Salurkan amal jariyah, wakaf, dan zakat Anda bersama lembaga resmi WAZISQI Pondok Pesantren Al-Ittifaqiah.">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sites.google.com/view/wazisqiittifaqiah/">
+    <meta property="og:title" content="WAZISQI - Pondok Pesantren Al-Ittifaqiah">
+    <meta property="og:description" content="Mari berlomba dalam kebaikan. Salurkan amal jariyah, wakaf, dan zakat Anda bersama lembaga resmi WAZISQI Pondok Pesantren Al-Ittifaqiah.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1584551246679-0daf3d275d05?q=80&w=1200&auto=format&fit=crop">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.tailwindcss.com"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -31,6 +41,13 @@
         .view-section { display: none; animation: fadeIn 0.3s; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Animasi Centang Sukses */
+        @keyframes popUp {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop { animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .quick-btn{
             background:#fff;
             border:1px solid #e2e8f0;
@@ -47,17 +64,13 @@
 
         .quick-btn:active{
             transform:scale(.97);
-        }      
+        }        
 
-        .quick-btn:active{
-                    transform:scale(.97);
-                }
-                /* TAMBAHAN BARU UNTUK TOMBOL AKTIF */
-                .quick-btn.active-btn {
-                    background: #d1fae5 !important;
-                    border-color: #10b981 !important;
-                    color: #047857 !important;
-                }          
+        .quick-btn.active-btn {
+            background: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #047857 !important;
+        }          
     </style>
 </head>
 <body class="text-slate-800 bg-slate-100 overflow-x-hidden">
@@ -69,7 +82,7 @@
                 <div class="relative shrink-0">
                     <div class="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white shadow-lg">
                         <img 
-                            src="https://lh3.googleusercontent.com/d/1rWI0k_0fNsMjzs9JrZ6pv2BMFfhAOdXR" 
+                            src="https://lh3.googleusercontent.com/d/1tGDo73Cp7fjA0xnPWYhiEGaDQVn6rMez" 
                             alt="Logo WAZISQI" 
                             class="w-full h-full object-contain p-1"
                             onerror="this.src='https://placehold.co/100x100/10b981/ffffff?text=Logo'"
@@ -80,15 +93,21 @@
                     <h1 class="font-black text-xl text-slate-800 leading-tight tracking-tight truncate">
                         WAZIS<span class="text-green-600">QI</span>
                     </h1>
-                    <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-wider leading-tight">
+                    <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-wider leading-tight" data-i18n="wakafZakat">
                         Wakaf, Zakat, Infak dan Shadaqah<br>AL-ITTIFAQIAH
                     </p>
                 </div>
             </div>
 
-            <button onclick="openModalLogin()" id="admin-btn-ui" class="group cursor-pointer w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-sm border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all duration-300">
-                <i class="ph-fill ph-user text-xl group-hover:scale-110 transition-transform"></i>
-            </button>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleLanguage()" class="group cursor-pointer h-10 px-3 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-200 transition-all duration-300">
+                    <i class="ph-bold ph-globe text-lg mr-1"></i> <span id="lang-text" class="text-xs font-bold">ID</span>
+                </button>
+
+                <button onclick="openModalLogin()" id="admin-btn-ui" class="group cursor-pointer w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-sm border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all duration-300">
+                    <i class="ph-fill ph-user text-xl group-hover:scale-110 transition-transform"></i>
+                </button>
+            </div>
         </header>
 
         <main id="main-content" class="flex-1 overflow-y-auto hide-scroll relative pb-24">
@@ -102,7 +121,7 @@
                     
                     <div class="relative z-10">
                         <div class="flex justify-between items-start mb-6">
-                            <p class="text-white text-lg font-medium opacity-90 tracking-wide">
+                            <p class="text-white text-lg font-medium opacity-90 tracking-wide" data-i18n="totalDana">
                                 Total Dana Terhimpun
                             </p>
                             <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-md shadow-inner border border-white/10">
@@ -124,14 +143,14 @@
                                 <div>
                                     <div class="flex items-baseline gap-1">
                                         <span class="text-lg font-bold leading-none" id="dashboard-donatur">...</span>
-                                        <span class="text-sm font-medium opacity-90">Donatur</span>
+                                        <span class="text-sm font-medium opacity-90" data-i18n="donatur">Donatur</span>
                                     </div>
-                                    <p class="text-[10px] text-white/80 uppercase tracking-wide mt-0.5">Terverifikasi</p>
+                                    <p class="text-[10px] text-white/80 uppercase tracking-wide mt-0.5" data-i18n="terverifikasi">Terverifikasi</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-1.5 py-1.5 px-3 rounded-full bg-white/20 backdrop-blur-md border border-white/10">
                                 <div class="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div>
-                                <span class="text-[10px] font-bold text-white uppercase tracking-wider">Aktif</span>
+                                <span class="text-[10px] font-bold text-white uppercase tracking-wider" data-i18n="aktif">Aktif</span>
                             </div>
                         </div>
                     </div>
@@ -139,7 +158,7 @@
 
                 <div class="-mt-2 mb-6">
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg text-slate-800">Kategori Program</h3>
+                        <h3 class="font-bold text-lg text-slate-800" data-i18n="katProgram">Kategori Program</h3>
                     </div>   
 
                     <div class="flex justify-between items-start gap-2">
@@ -147,31 +166,31 @@
                             <div class="cat-icon w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-sm transition-all duration-300 active:scale-95">
                                 <i class="ph-fill ph-squares-four text-2xl"></i>
                             </div>
-                            <span class="cat-text text-xs font-bold text-slate-800 transition-colors">Semua</span>
+                            <span class="cat-text text-xs font-bold text-slate-800 transition-colors" data-i18n="semua">Semua</span>
                         </button>
                         <button onclick="filterProgram('Wakaf')" id="btn-cat-Wakaf" class="cat-btn flex flex-col items-center gap-2 group w-16 outline-none">
                             <div class="cat-icon w-14 h-14 rounded-full bg-white text-primary flex items-center justify-center shadow-sm transition-all duration-300 active:scale-95">
                                 <i class="ph-fill ph-mosque text-2xl"></i>
                             </div>
-                            <span class="cat-text text-xs font-medium text-slate-500 transition-colors">Wakaf</span>
+                            <span class="cat-text text-xs font-medium text-slate-500 transition-colors" data-i18n="wakaf">Wakaf</span>
                         </button>
                         <button onclick="filterProgram('Zakat')" id="btn-cat-Zakat" class="cat-btn flex flex-col items-center gap-2 group w-16 outline-none">
                             <div class="cat-icon w-14 h-14 rounded-full bg-white text-primary flex items-center justify-center shadow-sm transition-all duration-300 active:scale-95">
                                 <i class="ph-fill ph-coins text-2xl"></i>
                             </div>
-                            <span class="cat-text text-xs font-medium text-slate-500 transition-colors">Zakat</span>
+                            <span class="cat-text text-xs font-medium text-slate-500 transition-colors" data-i18n="zakat">Zakat</span>
                         </button>
                         <button onclick="filterProgram('Infaq')" id="btn-cat-Infaq" class="cat-btn flex flex-col items-center gap-2 group w-16 outline-none">
                             <div class="cat-icon w-14 h-14 rounded-full bg-white text-primary flex items-center justify-center shadow-sm transition-all duration-300 active:scale-95">
                                 <i class="ph-fill ph-hand-heart text-2xl"></i>
                             </div>
-                            <span class="cat-text text-xs font-medium text-slate-500 transition-colors">Infaq</span>
+                            <span class="cat-text text-xs font-medium text-slate-500 transition-colors" data-i18n="infaq">Infaq</span>
                         </button>
                         <button onclick="filterProgram('Kurban')" id="btn-cat-Kurban" class="cat-btn flex flex-col items-center gap-2 group w-16 outline-none">
                             <div class="cat-icon w-14 h-14 rounded-full bg-white text-primary flex items-center justify-center shadow-sm transition-all duration-300 active:scale-95">
                                 <i class="ph-fill ph-cow text-2xl"></i>
                             </div>
-                            <span class="cat-text text-xs font-medium text-slate-500 transition-colors">Kurban</span>
+                            <span class="cat-text text-xs font-medium text-slate-500 transition-colors" data-i18n="kurban">Kurban</span>
                         </button>
                     </div>
                 </div>
@@ -179,8 +198,8 @@
                 <div>
                     <div class="mb-4 flex justify-between items-end">
                         <div>
-                            <h3 class="font-bold text-lg text-slate-800">Program Kebaikan</h3>
-                            <p class="text-xs text-slate-500">Pilih program amal jariyah</p>
+                            <h3 class="font-bold text-lg text-slate-800" data-i18n="progKebaikan">Program Kebaikan</h3>
+                            <p class="text-xs text-slate-500" data-i18n="pilihProg">Pilih program amal jariyah</p>
                         </div>
                     </div>
                     <div id="program-list-container" class="grid grid-cols-1 gap-4">
@@ -194,20 +213,19 @@
                         </div>
                     </div>
                 </div>
-                <!-- Section Titipan Doa -->
                 <div class="mb-6">
                     <div class="mb-4 flex items-center gap-2">
                         <i class="ph-fill ph-hands-praying text-emerald-500 text-xl"></i>
-                        <h3 class="font-bold text-lg text-slate-800">Titipan Doa</h3>
+                        <h3 class="font-bold text-lg text-slate-800" data-i18n="titipanDoa">Titipan Doa</h3>
                     </div>
                     <div id="doa-list-container" class="flex overflow-x-auto thin-scroll gap-4 pb-2 snap-x">
-                        <div class="text-[11px] text-slate-400 italic">Memuat doa-doa baik...</div>
+                        <div class="text-[11px] text-slate-400 italic" data-i18n="memuatDoa">Memuat doa-doa baik...</div>
                     </div>
                 </div>
                 <div class="pt-4 border-t border-slate-200">
-                    <h3 class="font-bold text-lg text-slate-800 mb-3">Donatur Terbaru</h3>
+                    <h3 class="font-bold text-lg text-slate-800 mb-3" data-i18n="donTerbaru">Donatur Terbaru</h3>
                     <div id="recent-donors-list" class="space-y-3">
-                        <div class="text-sm text-slate-400 text-center py-4">Memuat data...</div>
+                        <div class="text-sm text-slate-400 text-center py-4" data-i18n="memuatData">Memuat data...</div>
                     </div>
                 </div>
             </section>
@@ -215,13 +233,13 @@
             <section id="view-donasi" class="view-section p-5">
                 <div id="form-container">
                     <div class="mb-6">
-                        <h2 class="text-xl font-bold text-slate-800">Formulir Donasi</h2>
-                        <p class="text-sm text-slate-500">Infaqkan sebagian harta terbaik Anda</p>
+                        <h2 class="text-xl font-bold text-slate-800" data-i18n="formDonasi">Formulir Donasi</h2>
+                        <p class="text-sm text-slate-500" data-i18n="infaqSebagian">Infaqkan sebagian harta terbaik Anda</p>
                     </div>
                     
                     <form id="form-donasi" onsubmit="handleFormDonasi(event)" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1" data-i18n="labelPilihProg">
                                 Pilih Program
                             </label>
 
@@ -229,18 +247,17 @@
                                     onchange="updateHargaSatuan()"
                                     class="w-full bg-white border border-slate-200 text-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none"
                                     required>
-                                <option value="">-- Pilih Program --</option>
+                                <option value="" data-i18n="optPilihProg">-- Pilih Program --</option>
                             </select>
                         </div>
 
-                        <!-- Preview Program -->
                         <div id="program-preview" class="hidden bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-4 mt-2">
                             <img id="preview-image" src="" class="w-full aspect-square object-cover bg-slate-50">
                             
                             <div class="p-4">
                                 <div class="flex justify-between items-center mb-2">
                                     <span id="preview-kategori" class="text-[9px] font-black text-primary uppercase bg-emerald-50 px-2 py-0.5 rounded"></span>
-                                    <span class="text-[9px] text-slate-400 font-medium"><b id="preview-target" class="text-slate-600">Rp 0</b></span>
+                                    <span class="text-[9px] text-slate-400 font-medium"><span data-i18n="target">Target</span>: <b id="preview-target" class="text-slate-600">Rp 0</b></span>
                                 </div>
                                 
                                 <h3 id="preview-title" class="font-bold text-slate-800 text-sm flex items-center gap-1 leading-tight"></h3>
@@ -254,11 +271,11 @@
                                         <div class="text-[10px] text-slate-500 flex items-center gap-1.5">
                                             <span class="flex items-center gap-0.5">
                                                 <i class="ph-fill ph-users text-emerald-500 text-[11px]"></i>
-                                                Donatur: <b id="preview-donatur" class="text-slate-700">0</b>
+                                                <span data-i18n="donatur">Donatur</span>: <b id="preview-donatur" class="text-slate-700">0</b>
                                             </span>
                                             <span class="text-slate-300">•</span> 
                                             <span>
-                                                Terkumpul: <b id="preview-terkumpul" class="text-emerald-600">Rp 0</b>
+                                                <span data-i18n="terkumpul">Terkumpul</span>: <b id="preview-terkumpul" class="text-emerald-600">Rp 0</b>
                                             </span>
                                         </div>
                                         <span id="preview-pct" class="text-[10px] font-bold text-primary">0%</span>
@@ -269,7 +286,7 @@
 
                         <div id="area-satuan" style="display:none;" class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
 
-                            <label class="block text-sm font-semibold text-emerald-800 mb-1">
+                            <label class="block text-sm font-semibold text-emerald-800 mb-1" data-i18n="labelJmlUnit">
                                 Jumlah Unit/Porsi
                             </label>
 
@@ -280,16 +297,13 @@
                                   value="1"
                                   class="w-full bg-white border border-emerald-200 rounded-lg px-4 py-2 outline-none">
 
-                            <p class="text-[10px] text-emerald-600 mt-1 font-bold"
-                              id="info-harga-satuan">
-                            </p>
+                            <p class="text-[10px] text-emerald-600 mt-1 font-bold" id="info-harga-satuan"></p>
 
-                            <!-- Judul -->
                             <div id="quick-unit" class="mt-4 hidden">
 
                                 <p class="text-xs font-bold text-emerald-700 flex items-center gap-1 mb-2">
                                     <i class="ph-fill ph-squares-four"></i>
-                                    Jumlah Unit Populer
+                                    <span data-i18n="jmlUnitPopuler">Jumlah Unit Populer</span>
                                 </p>
 
                                 <div class="grid grid-cols-5 gap-2">
@@ -297,34 +311,33 @@
                                     <button type="button" onclick="setUnit(5, this)" class="quick-btn btn-quick-unit">5</button>
                                     <button type="button" onclick="setUnit(10, this)" class="quick-btn btn-quick-unit">10</button>
                                     <button type="button" onclick="setUnit(20, this)" class="quick-btn btn-quick-unit">20</button>
-                                    <button type="button" onclick="focusUnit(this)" class="quick-btn btn-quick-unit bg-orange-50 text-orange-600 border-orange-200">Lainnya</button>
+                                    <button type="button" onclick="focusUnit(this)" class="quick-btn btn-quick-unit bg-orange-50 text-orange-600 border-orange-200" data-i18n="lainnya">Lainnya</button>
                                 </div>
 
                             </div>
 
                         </div>
-                        <!-- Fitur Kalkulator Zakat (Hidden by Default) -->
                         <div id="kalkulator-zakat" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-4 shadow-sm relative overflow-hidden">
                             <div class="absolute -right-4 -top-4 opacity-10">
                                 <i class="ph-fill ph-calculator text-7xl text-emerald-800"></i>
                             </div>
                             <div class="relative z-10">
                                 <div class="flex items-center gap-2 mb-3">
-                                    <h3 class="font-bold text-emerald-800 text-sm">Kalkulator Zakat <span class="bg-emerald-200 text-emerald-700 px-1.5 py-0.5 rounded text-[10px] ml-1">2,5%</span></h3>
+                                    <h3 class="font-bold text-emerald-800 text-sm"><span data-i18n="kalZakat">Kalkulator Zakat</span> <span class="bg-emerald-200 text-emerald-700 px-1.5 py-0.5 rounded text-[10px] ml-1">2,5%</span></h3>
                                 </div>
                                 <div class="space-y-3">
                                     <div>
-                                        <label class="block text-[11px] font-bold text-emerald-700 mb-1">Total Harta / Penghasilan</label>
+                                        <label class="block text-[11px] font-bold text-emerald-700 mb-1" data-i18n="labelHarta">Total Harta / Penghasilan</label>
                                         <div class="relative">
                                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">Rp</span>
                                             <input type="text" id="input-harta-zakat" oninput="hitungZakat(this)" placeholder="0" class="w-full bg-white border border-emerald-200 rounded-xl pl-10 pr-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-bold text-emerald-700">
                                         </div>
                                     </div>
                                     <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
-                                        <span class="text-[11px] font-bold text-slate-500">Wajib Zakat Dikeluarkan</span>
+                                        <span class="text-[11px] font-bold text-slate-500" data-i18n="wajibZakat">Wajib Zakat Dikeluarkan</span>
                                         <span id="hasil-hitung-zakat" class="font-black text-emerald-600 text-lg">Rp 0</span>
                                     </div>
-                                    <button type="button" onclick="gunakanNominalZakat()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-95 shadow-sm">
+                                    <button type="button" onclick="gunakanNominalZakat()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-95 shadow-sm" data-i18n="btnGunakanNominal">
                                         Gunakan Nominal Ini
                                     </button>
                                 </div>
@@ -332,42 +345,29 @@
                         </div>
                         <div>
 
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1" data-i18n="labelNominal">
                                 Nominal Donasi
-                            </label>
-
-                            <p id="nominal-info"
-                              class="hidden text-xs italic text-slate-500 mt-1">
-                            </p>                           
+                            </label>                           
 
                             <div class="relative">
-
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">
-                                    Rp
-                                </span>
-
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">Rp</span>
                                 <input type="text"
                                       id="donasi-nominal"
                                       placeholder="0"
                                       class="w-full bg-white border border-slate-200 rounded-xl pl-12 pr-10 py-3 focus:ring-2 focus:ring-primary outline-none font-bold text-emerald-600"
                                       required>
 
-                                <i id="nominal-lock"
-                                  class="ph-fill ph-lock absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hidden">
-                                </i>
-
+                                <i id="nominal-lock" class="ph-fill ph-lock absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hidden"></i>
                             </div>
 
-                            <p id="nominal-info"
-                              class="hidden text-xs italic text-slate-500 mt-1">
+                            <p id="nominal-info" class="hidden text-xs italic text-slate-500 mt-1" data-i18n="nomOtomatis">
+                                Nominal dihitung otomatis berdasarkan jumlah unit yang dipilih.
                             </p>
 
-                            <!-- Nominal Cepat -->
                             <div id="quick-nominal" class="mt-4 hidden">
-
                                 <p class="text-xs font-bold text-emerald-700 flex items-center gap-1 mb-2">
                                     <i class="ph-fill ph-lightning"></i>
-                                    Nominal Rekomendasi
+                                    <span data-i18n="nomRekomendasi">Nominal Rekomendasi</span>
                                 </p>
 
                                 <div class="grid grid-cols-3 gap-2">
@@ -376,28 +376,37 @@
                                     <button type="button" onclick="setNominal(250000, this)" class="quick-btn btn-quick-nom">250rb</button>
                                     <button type="button" onclick="setNominal(500000, this)" class="quick-btn btn-quick-nom">500rb</button>
                                     <button type="button" onclick="setNominal(1000000, this)" class="quick-btn btn-quick-nom">1 Juta</button>
-                                    <button type="button" onclick="focusNominal(this)" class="quick-btn btn-quick-nom bg-orange-50 text-orange-600 border-orange-200">Lainnya</button>
+                                    <button type="button" onclick="focusNominal(this)" class="quick-btn btn-quick-nom bg-orange-50 text-orange-600 border-orange-200" data-i18n="lainnya">Lainnya</button>
                                 </div>
-
                             </div>
-
                         </div>
+
                         <div class="grid grid-cols-1 gap-4">
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Lengkap</label>
-                                <input type="text" id="donasi-nama" placeholder="Contoh: Hamba Allah" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none" required>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1" data-i18n="labelNama">Nama Lengkap</label>
+                                <input type="text" id="donasi-nama" data-i18n-placeholder="phNama" placeholder="Contoh: Muhammad" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none transition-all duration-300" required>
+                                
+                                <!-- Toggle Anonim -->
+                                <label class="flex items-center gap-2 mt-3 cursor-pointer select-none w-max group">
+                                    <div class="relative">
+                                        <input type="checkbox" id="toggle-anonim" onchange="handleAnonimToggle()" class="peer sr-only">
+                                        <div class="block bg-slate-200 w-10 h-6 rounded-full transition-colors peer-checked:bg-primary border border-slate-300 peer-checked:border-primary"></div>
+                                        <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-4 shadow-sm"></div>
+                                    </div>
+                                    <span class="text-xs font-semibold text-slate-600 transition-colors group-hover:text-slate-800" data-i18n="donasiAnonim">Donasi atas nama "Hamba Allah"</span>
+                                </label>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-1">No. WhatsApp</label>
-                                <input type="tel" id="donasi-wa" placeholder="08xxxxxx" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none" required>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1" data-i18n="labelWa">No. WhatsApp</label>
+                                <input type="tel" id="donasi-wa" data-i18n-placeholder="phWa" placeholder="Contoh: 08123456789" oninput="this.value = this.value.replace(/[^0-9]/g, '')" minlength="10" maxlength="15" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none" required>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-1">Doa & Harapan <span class="text-slate-400 font-normal">(Opsional)</span></label>
-                                <textarea id="donasi-doa" rows="2" placeholder="Tuliskan doa untuk Anda, keluarga, atau kerabat..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none text-sm resize-none"></textarea>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1" data-i18n="labelDoa">Doa & Harapan <span class="text-slate-400 font-normal">(Opsional)</span></label>
+                                <textarea id="donasi-doa" rows="2" data-i18n-placeholder="phDoa" placeholder="Tuliskan doa untuk Anda, keluarga, atau kerabat..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none text-sm resize-none"></textarea>
                             </div>
                         </div>
                         <button type="submit" id="btn-submit-donasi" class="w-full bg-gradient-to-br from-primary to-primaryDark text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all active:scale-95 mt-2 flex justify-center items-center gap-2">
-                            <span>Lanjutkan Pembayaran</span> <i class="ph-bold ph-arrow-right"></i>
+                            <span data-i18n="btnLanjut">Lanjutkan Pembayaran</span> <i class="ph-bold ph-arrow-right"></i>
                         </button>
                     </form>
                 </div>
@@ -408,34 +417,34 @@
                             <i class="ph-fill ph-check-circle text-3xl"></i>
                         </div>
                         
-                        <h3 class="text-xl font-bold text-slate-800">Formulir Terkirim</h3>
-                        <p class="text-xs text-slate-500 px-4">Silakan transfer sesuai nominal ke rekening di bawah ini:</p>
+                        <h3 class="text-xl font-bold text-slate-800" data-i18n="formTerkirim">Formulir Terkirim</h3>
+                        <p class="text-xs text-slate-500 px-4" data-i18n="silakanTransfer">Silakan transfer sesuai nominal ke rekening di bawah ini:</p>
                         
                         <div class="mt-6 p-4 bg-slate-50 rounded-2xl border border-slate-100 relative">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Bank_Syariah_Indonesia.svg" class="h-6 mx-auto mb-3">
                             <p class="text-2xl font-mono font-black text-slate-800 tracking-wider" id="no_rekening">9104286800</p>
                             <p class="text-xs font-bold text-slate-500 mt-1 uppercase">a.n Pondok Pesantren Al Ittifaqiah</p>
                             
-                            <button onclick="salinRekening()" class="mt-3 text-xs bg-white border border-emerald-200 text-emerald-600 px-4 py-1.5 rounded-full font-bold shadow-sm">
+                            <button onclick="salinRekening()" class="mt-3 text-xs bg-white border border-emerald-200 text-emerald-600 px-4 py-1.5 rounded-full font-bold shadow-sm" data-i18n="salinRek">
                                 Salin No. Rek
                             </button>
 
                             <div class="mt-5 bg-white rounded-xl p-4 border border-slate-100">
                                 <div class="flex justify-between text-sm mb-2">
-                                    <span class="text-slate-500">Nominal Donasi</span>
+                                    <span class="text-slate-500" data-i18n="labelNominal">Nominal Donasi</span>
                                     <span class="font-bold" id="info-nominal-donasi">Rp 0</span>
                                 </div>
                                 <div class="flex justify-between text-sm mb-2">
-                                    <span class="text-slate-500">Kode Unik <span class="text-[9px] bg-orange-100 text-orange-600 px-1 py-0.5 rounded">Penanda</span></span>
+                                    <span class="text-slate-500"><span data-i18n="kodeUnik">Kode Unik</span> <span class="text-[9px] bg-orange-100 text-orange-600 px-1 py-0.5 rounded" data-i18n="penanda">Penanda</span></span>
                                     <span class="font-bold text-orange-500" id="info-kode-unik">+0</span>
                                 </div>
                                 <div class="flex justify-between text-sm mb-2">
-                                    <span class="text-slate-500">Biaya Admin</span>
-                                    <span class="font-bold text-emerald-600">Gratis</span>
+                                    <span class="text-slate-500" data-i18n="biayaAdmin">Biaya Admin</span>
+                                    <span class="font-bold text-emerald-600" data-i18n="gratis">Gratis</span>
                                 </div>
                                 <hr class="my-2 border-dashed border-slate-200">
                                 <div class="flex justify-between items-center mt-2">
-                                    <span class="font-bold text-slate-800">Total Transfer</span>
+                                    <span class="font-bold text-slate-800" data-i18n="totalTransfer">Total Transfer</span>
                                     <div class="flex items-center gap-2">
                                         <span class="font-black text-lg text-emerald-600" id="info-total-transfer">Rp 0</span>
                                         <button onclick="salinNominal()" class="w-7 h-7 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-100 active:scale-90 transition shadow-sm border border-emerald-100" title="Salin Nominal">
@@ -446,7 +455,7 @@
                             </div>
 
                             <div class="mt-3 bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-left">
-                                <p class="text-[11px] text-emerald-700 leading-relaxed">
+                                <p class="text-[11px] text-emerald-700 leading-relaxed" data-i18n="mohonTransfer">
                                     Mohon transfer tepat hingga 3 digit terakhir agar memudahkan verifikasi.
                                 </p>
                             </div>
@@ -454,15 +463,15 @@
                     </div>
 
                     <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-3">
-                        <label class="block text-sm font-bold text-slate-700">Unggah Bukti Transfer</label>
+                        <label class="block text-sm font-bold text-slate-700" data-i18n="unggahBukti">Unggah Bukti Transfer</label>
                         <input type="file" id="bukti_transfer" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 border border-dashed border-slate-200 p-3 rounded-xl cursor-pointer">
                         <button onclick="handleUploadBukti()" id="btn-upload-bukti" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl flex justify-center items-center gap-2 transition duration-200">
-                            Kirim Bukti Pembayaran
+                            <span data-i18n="kirimBukti">Kirim Bukti Pembayaran</span>
                         </button>
                     </div>
 
                     <div class="text-center pt-2">
-                        <button onclick="resetDonasi()" class="text-sm text-slate-400 font-medium underline hover:text-slate-600 transition">
+                        <button onclick="resetDonasi()" class="text-sm text-slate-400 font-medium underline hover:text-slate-600 transition" data-i18n="kembali">
                             Kembali
                         </button>
                     </div>
@@ -470,50 +479,50 @@
 
                 <div id="donasi-finish" class="hidden space-y-5">
                     <div class="bg-white rounded-3xl p-6 text-center shadow-sm border border-emerald-100">
-                        <div class="w-24 h-24 mx-auto bg-emerald-100 rounded-full flex items-center justify-center">
+                        <div id="icon-sukses" class="w-24 h-24 mx-auto bg-emerald-100 rounded-full flex items-center justify-center opacity-0">
                             <i class="ph-fill ph-check-circle text-6xl text-emerald-600"></i>
                         </div>
-                        <h2 class="mt-4 text-2xl font-black text-slate-800">
+                        <h2 class="mt-4 text-2xl font-black text-slate-800" data-i18n="jaza">
                             Jazakumullah Khairan Katsiran
                         </h2>
-                        <p class="text-sm text-slate-500 mt-2">
+                        <p class="text-sm text-slate-500 mt-2" data-i18n="semogaHarta">
                             Semoga harta yang disedekahkan menjadi pembersih dan penambah keberkahan serta menjadi amal jariyah yang terus mengalir.
                         </p>
                     </div>
 
                     <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
-                        <p class="text-xs text-slate-500 mb-1">ID Transaksi</p>
+                        <p class="text-xs text-slate-500 mb-1" data-i18n="idTrx">ID Transaksi</p>
                         <p id="finish-trx-id" class="font-black text-lg text-emerald-600">-</p>
                     </div>
 
                     <div class="bg-orange-50 border border-orange-200 rounded-2xl p-4">
                         <div class="flex items-center gap-2">
                             <i class="ph-fill ph-clock-clockwise text-orange-500"></i>
-                            <span class="font-bold text-orange-700">Menunggu Verifikasi</span>
+                            <span class="font-bold text-orange-700" data-i18n="menungguVerif">Menunggu Verifikasi</span>
                         </div>
-                        <p class="text-xs text-orange-600 mt-2">
+                        <p class="text-xs text-orange-600 mt-2" data-i18n="buktiDiterima">
                             Bukti transfer telah kami terima. Tim admin akan melakukan verifikasi dan notifikasi WhatsApp akan dikirim setelah proses selesai.
                         </p>
                     </div>
 
                     <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
-                        <h3 class="font-bold text-slate-800 mb-3">Ringkasan Donasi</h3>
+                        <h3 class="font-bold text-slate-800 mb-3" data-i18n="ringkasanDonasi">Ringkasan Donasi</h3>
                         <div class="flex justify-between text-sm">
-                            <span class="text-slate-500">Program</span>
+                            <span class="text-slate-500" data-i18n="programLabel">Program</span>
                             <span id="finish-program" class="font-bold text-slate-800"></span>
                         </div>
                         <div class="flex justify-between text-sm mt-2">
-                            <span class="text-slate-500">Total Donasi</span>
+                            <span class="text-slate-500" data-i18n="totalDonasiLabel">Total Donasi</span>
                             <span id="finish-total" class="font-bold text-emerald-600"></span>
                         </div>
                     </div>
 
                     <a id="btn-share-wa" target="_blank" class="w-full bg-emerald-50 text-emerald-700 font-bold py-4 rounded-xl flex justify-center items-center gap-2 border border-emerald-200">
-                        <i class="ph-fill ph-whatsapp-logo text-lg"></i>
-                        Bagikan Kebaikan Ini
+                        <i class="ph-bold ph-share-network text-lg"></i>
+                        <span data-i18n="bagikan">Bagikan Kebaikan Ini</span>
                     </a>
 
-                    <button onclick="selesaiDonasi()" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg">
+                    <button onclick="selesaiDonasi()" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg" data-i18n="kembaliBeranda">
                         Kembali ke Beranda
                     </button>
                 </div>
@@ -553,38 +562,34 @@
 
             <section id="view-laporan" class="view-section p-5 space-y-6">
                 <div class="mb-2">
-                    <h2 class="text-xl font-bold text-slate-800">Laporan Transparansi</h2>
-                    <p class="text-sm text-slate-500">Pantau jejak kebaikan & riwayat donasi Anda</p>
+                    <h2 class="text-xl font-bold text-slate-800" data-i18n="lapTrans">Laporan Transparansi</h2>
+                    <p class="text-sm text-slate-500" data-i18n="pantauJejak">Pantau jejak kebaikan & riwayat donasi Anda</p>
                 </div>
 
-                <!-- 1. Fitur Cek Riwayat Pribadi -->
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center shrink-0">
                             <i class="ph-bold ph-magnifying-glass text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-sm">Cek Riwayat Donasi</h3>
-                            <p class="text-[10px] text-slate-500">Gunakan No. WhatsApp Anda</p>
+                            <h3 class="font-bold text-slate-800 text-sm" data-i18n="cekRiwayat">Cek Riwayat Donasi</h3>
+                            <p class="text-[10px] text-slate-500" data-i18n="gunakanWa">Gunakan No. WhatsApp Anda</p>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <input type="tel" id="search-wa-laporan" placeholder="Contoh: 08123456789" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none text-sm focus:border-primary focus:ring-1 focus:ring-primary transition">
-                        <button id="btn-cari-riwayat" onclick="cariRiwayat()" class="bg-primary text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-md shadow-primary/30 hover:bg-primaryDark active:scale-95 transition">
+                        <input type="tel" id="search-wa-laporan" data-i18n-placeholder="phWa" placeholder="Contoh: 08123456789" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none text-sm focus:border-primary focus:ring-1 focus:ring-primary transition">
+                        <button id="btn-cari-riwayat" onclick="cariRiwayat()" class="bg-primary text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-md shadow-primary/30 hover:bg-primaryDark active:scale-95 transition" data-i18n="btnCari">
                             Cari
                         </button>
                     </div>
-                    <!-- Tempat memunculkan hasil pencarian nantinya -->
                     <div id="hasil-pencarian-donasi" class="mt-4 hidden space-y-2"></div>
                 </div>
 
-                <!-- 2. Section Dokumentasi Penyaluran (Mockup/Dummy) -->
                 <div class="space-y-4 pt-2">
                     <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                        <i class="ph-fill ph-camera-rotate text-primary text-lg"></i> Dokumentasi Penyaluran
+                        <i class="ph-fill ph-camera-rotate text-primary text-lg"></i> <span data-i18n="dokPenyaluran">Dokumentasi Penyaluran</span>
                     </h3>
                     
-                    <!-- Card Dummy Penyaluran -->
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
                         <div class="h-32 bg-slate-200 relative">
                             <img src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=500" class="w-full h-full object-cover">
@@ -597,7 +602,7 @@
                             <p class="font-bold text-slate-800 text-sm mt-2 leading-tight">Penyaluran 250 Mushaf untuk Santri Tahfidz</p>
                             <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">Alhamdulillah, berkat kebaikan para donatur, hari ini telah disalurkan 250 mushaf Al-Qur'an baru untuk santri tahfidz Al-Ittifaqiah.</p>
                             <div class="mt-3 pt-3 border-t border-slate-100 flex justify-between items-center">
-                                <span class="text-[10px] text-slate-500">Dana Tersalurkan</span>
+                                <span class="text-[10px] text-slate-500" data-i18n="danaTersalurkan">Dana Tersalurkan</span>
                                 <span class="text-xs font-bold text-primary">Rp 21.000.000</span>
                             </div>
                         </div>
@@ -609,8 +614,8 @@
             <section id="view-kontak" class="view-section p-5 space-y-6">
                 <div class="space-y-4">
                     <div class="mb-2">
-                        <h2 class="text-xl font-bold text-slate-800">Tentang Kami</h2>
-                        <p class="text-sm text-slate-500">Mengenal lebih dekat lembaga WAZISQI</p>
+                        <h2 class="text-xl font-bold text-slate-800" data-i18n="tentangKami">Tentang Kami</h2>
+                        <p class="text-sm text-slate-500" data-i18n="mengenalLebih">Mengenal lebih dekat lembaga WAZISQI</p>
                     </div>
 
                     <div class="bg-white p-5 rounded-3xl shadow-sm border border-emerald-100 relative overflow-hidden">
@@ -619,38 +624,38 @@
                         <div class="relative z-10 space-y-4">
                             <div>
                                 <h3 class="text-sm font-bold text-emerald-700 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <i class="ph-fill ph-buildings text-lg"></i> Profil Lembaga
+                                    <i class="ph-fill ph-buildings text-lg"></i> <span data-i18n="profilLembaga">Profil Lembaga</span>
                                 </h3>
-                                <p class="text-sm text-slate-600 leading-relaxed text-justify">
+                                <p class="text-sm text-slate-600 leading-relaxed text-justify" data-i18n="teksProfil">
                                     <span class="font-bold text-slate-800">WAZISQI</span> (Wakaf, Zakat, Infak dan Shadaqah Al-Ittifaqiah) adalah lembaga resmi di bawah naungan Pondok Pesantren Al-Ittifaqiah Indralaya. Kami berdedikasi untuk mengelola, menyalurkan, dan memberdayakan dana umat secara profesional, transparan, dan amanah guna mendukung kemandirian pesantren dan kesejahteraan umat.
                                 </p>
                             </div>
 
                             <div class="pt-4 border-t border-slate-100">
                                 <h3 class="text-sm font-bold text-emerald-700 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <i class="ph-fill ph-eye text-lg"></i> Visi
+                                    <i class="ph-fill ph-eye text-lg"></i> <span data-i18n="visi">Visi</span>
                                 </h3>
-                                <p class="text-sm text-slate-600 leading-relaxed italic text-justify">
+                                <p class="text-sm text-slate-600 leading-relaxed italic text-justify" data-i18n="teksVisi">
                                     "Menjadi lembaga filantropi Islam yang terpercaya, profesional, dan mandiri dalam mengelola dana umat demi terwujudnya peradaban Islam yang rahmatan lil 'alamin."
                                 </p>
                             </div>
 
                             <div class="pt-4 border-t border-slate-100">
                                 <h3 class="text-sm font-bold text-emerald-700 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <i class="ph-fill ph-target text-lg"></i> Misi
+                                    <i class="ph-fill ph-target text-lg"></i> <span data-i18n="misi">Misi</span>
                                 </h3>
                                 <ul class="text-sm text-slate-600 leading-relaxed space-y-2 list-none">
                                     <li class="flex items-start gap-2">
                                         <i class="ph-bold ph-check text-emerald-500 mt-1 shrink-0"></i>
-                                        <span>Menghimpun dana ZISWAF secara transparan dan akuntabel.</span>
+                                        <span data-i18n="teksMisi1">Menghimpun dana ZISWAF secara transparan dan akuntabel.</span>
                                     </li>
                                     <li class="flex items-start gap-2">
                                         <i class="ph-bold ph-check text-emerald-500 mt-1 shrink-0"></i>
-                                        <span>Menyalurkan dana umat tepat sasaran untuk program pendidikan, dakwah, dan sosial.</span>
+                                        <span data-i18n="teksMisi2">Menyalurkan dana umat tepat sasaran untuk program pendidikan, dakwah, dan sosial.</span>
                                     </li>
                                     <li class="flex items-start gap-2">
                                         <i class="ph-bold ph-check text-emerald-500 mt-1 shrink-0"></i>
-                                        <span>Memberdayakan ekonomi umat melalui optimalisasi aset wakaf produktif.</span>
+                                        <span data-i18n="teksMisi3">Memberdayakan ekonomi umat melalui optimalisasi aset wakaf produktif.</span>
                                     </li>
                                 </ul>
                             </div>
@@ -660,8 +665,8 @@
 
                 <div class="space-y-3 pt-4 border-t border-slate-200">
                     <div class="mb-3">
-                        <h2 class="text-lg font-bold text-slate-800">Kontak & Alamat</h2>
-                        <p class="text-xs text-slate-500">Layanan informasi & kendala donasi</p>
+                        <h2 class="text-lg font-bold text-slate-800" data-i18n="kontakAlamat">Kontak & Alamat</h2>
+                        <p class="text-xs text-slate-500" data-i18n="layananInfo">Layanan informasi & kendala donasi</p>
                     </div>
 
                     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 relative overflow-hidden hover:border-emerald-200 transition">
@@ -670,7 +675,7 @@
                             <i class="ph-fill ph-whatsapp-logo text-xl"></i>
                         </div>
                         <div class="flex-1 relative z-10 min-w-0">
-                            <p class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-0.5">Admin WAZISQI</p>
+                            <p class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-0.5" data-i18n="adminWazisqi">Admin WAZISQI</p>
                             <p class="text-xs font-semibold text-slate-600 truncate">+62 889 7508 9958</p>
                         </div>
                         <a href="https://wa.me/6288975089958" target="_blank" class="w-8 h-8 bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white flex items-center justify-center rounded-lg shadow-sm transition active:scale-90 relative z-10 shrink-0">
@@ -684,7 +689,7 @@
                             <i class="ph-fill ph-globe text-xl"></i>
                         </div>
                         <div class="flex-1 relative z-10 min-w-0">
-                            <p class="text-[13px] font-bold text-emerald-900 uppercase tracking-wider leading-none mb-1">Website</p>            
+                            <p class="text-[13px] font-bold text-emerald-900 uppercase tracking-wider leading-none mb-1" data-i18n="website">Website</p>            
                             <p class="text-[10px] text-slate-500 leading-tight truncate">ittifaqiah.ac.id</p>
                         </div>
                         <a href="https://ittifaqiah.ac.id/" target="_blank" class="w-8 h-8 bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white flex items-center justify-center rounded-lg shadow-sm transition active:scale-90 relative z-10 shrink-0">
@@ -698,9 +703,9 @@
                             <i class="ph-fill ph-map-pin-line text-xl"></i>
                         </div>
                         <div class="flex-1 relative z-10 min-w-0">
-                            <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider leading-none mb-1">Pondok Pesantren</p>
+                            <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider leading-none mb-1" data-i18n="ponpes">Pondok Pesantren</p>
                             <p class="text-xs font-bold text-emerald-800 uppercase tracking-wider truncate mb-1">Al-Ittifaqiah Indralaya</p>                        
-                            <p class="text-[10px] text-slate-500 leading-tight">Jln. Lintas Timur Km. 36 Indralaya, Kab. Ogan Ilir, Sumatera Selatan</p>
+                            <p class="text-[10px] text-slate-500 leading-tight" data-i18n="alamatPonpes">Jln. Lintas Timur Km. 36 Indralaya, Kab. Ogan Ilir, Sumatera Selatan</p>
                         </div>
                         <a href="https://maps.app.goo.gl/a1fsHZKQ2m7qvZ777" target="_blank" class="w-8 h-8 bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white flex items-center justify-center rounded-lg shadow-sm transition active:scale-90 relative z-10 shrink-0">
                             <i class="ph-bold ph-navigation-arrow text-lg"></i>
@@ -709,7 +714,7 @@
                 </div>
 
                 <div class="pt-2">
-                    <h3 class="font-bold text-slate-800 mb-3 text-sm">Follow Media Sosial Kami</h3>
+                    <h3 class="font-bold text-slate-800 mb-3 text-sm" data-i18n="followSosmed">Follow Media Sosial Kami</h3>
                     <div class="space-y-3">
                         <a href="https://www.facebook.com/MahadPPI/" target="_blank" class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:border-blue-200 transition active:scale-[0.98]">
                             <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
@@ -741,22 +746,22 @@
             
             <button onclick="router('beranda')" class="nav-item active flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-16 group" id="nav-beranda">
                 <i class="ph-fill ph-house text-[26px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
-                <span class="text-[10px] font-bold tracking-tight">Beranda</span>
+                <span class="text-[10px] font-bold tracking-tight" data-i18n="navBeranda">Beranda</span>
             </button>
             
             <button onclick="router('donasi')" class="nav-item flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-16 group" id="nav-donasi">
                 <i class="ph-fill ph-heart text-[26px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
-                <span class="text-[10px] font-bold tracking-tight">Donasi</span>
+                <span class="text-[10px] font-bold tracking-tight" data-i18n="navDonasi">Donasi</span>
             </button>
             
             <button onclick="router('laporan')" class="nav-item flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-16 group" id="nav-laporan">
                 <i class="ph-fill ph-article text-[26px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
-                <span class="text-[10px] font-bold tracking-tight">Laporan</span>
+                <span class="text-[10px] font-bold tracking-tight" data-i18n="navLaporan">Laporan</span>
             </button>
             
             <button onclick="router('kontak')" class="nav-item flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-16 group" id="nav-kontak">
                 <i class="ph-fill ph-user-circle text-[26px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
-                <span class="text-[10px] font-bold tracking-tight">Profil</span>
+                <span class="text-[10px] font-bold tracking-tight" data-i18n="navProfil">Profil</span>
             </button>
             
         </nav>
@@ -850,7 +855,6 @@
 
         const fRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
 
-        // Fungsi untuk membuat animasi angka berjalan (rolling number)
         function animateNumber(elementId, targetValue, duration) {
             const element = document.getElementById(elementId);
             let startTimestamp = null;
@@ -859,7 +863,6 @@
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                 
-                // Efek ease-out (cepat di awal, melambat dengan mulus di akhir)
                 const easeOut = 1 - Math.pow(1 - progress, 3);
                 const currentValue = Math.floor(easeOut * targetValue);
                 
@@ -868,35 +871,30 @@
                 if (progress < 1) {
                     window.requestAnimationFrame(step);
                 } else {
-                    element.innerText = fRupiah(targetValue); // Pastikan angka final tepat 100%
+                    element.innerText = fRupiah(targetValue);
                 }
             };
             window.requestAnimationFrame(step);
         }
 
-        // Fungsi untuk mengubah format tanggal menjadi "hari ini", "kemarin", dst.
         function timeAgo(dateInput) {
             if (!dateInput) return '';
 
             let date = new Date(dateInput);
 
-            // Jika browser menolak format tanggalnya (biasanya karena tidak ada nol di depan)
             if (isNaN(date.getTime()) && typeof dateInput === 'string') {
-                const datePart = dateInput.split(/[\s,]+/)[0]; // Ambil bagian "DD/MM/YYYY" saja
-                const parts = datePart.split(/[\/\-]/); // Pecah berdasarkan garis miring atau strip
+                const datePart = dateInput.split(/[\s,]+/)[0];
+                const parts = datePart.split(/[\/\-]/);
                 
                 if (parts.length === 3) {
-                    // parts[0] = Tanggal, parts[1] = Bulan, parts[2] = Tahun
                     const day = parseInt(parts[0], 10);
-                    const month = parseInt(parts[1], 10) - 1; // Di JavaScript, bulan dimulai dari 0 (0 = Januari)
+                    const month = parseInt(parts[1], 10) - 1;
                     const year = parseInt(parts[2], 10);
                     
-                    // Konversi menggunakan angka, lebih aman di semua browser
                     date = new Date(year, month, day);
                 }
             }
 
-            // Jika datanya memang benar-benar rusak/bukan tanggal
             if (isNaN(date.getTime())) return ''; 
 
             const now = new Date();
@@ -906,7 +904,7 @@
             const diffMs = nowMidnight - dateMidnight;
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-            if (diffDays < 0) return 'Baru saja'; // Antisipasi jika jam server sedikit lebih cepat
+            if (diffDays < 0) return 'Baru saja';
             if (diffDays === 0) return 'Hari ini';
             if (diffDays === 1) return 'Kemarin';
             if (diffDays < 7) return `${diffDays} hari lalu`;
@@ -924,7 +922,6 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // Jembatan PINTAR (Bisa untuk Netlify & Link Google Script)
         const GAS_URL = "https://script.google.com/macros/s/AKfycbzJzirrdSsFJj0jssWXOsOx01K4hXCyA75BVUzX6CE44COUQ8DoGrBe0n26a_Alvh6g/exec";
 
         function runGAS(action, payload = null) {
@@ -932,15 +929,11 @@
                 return new Promise((resolve, reject) => {
                     const handler = google.script.run
                         .withSuccessHandler((res) => {
-                            // Tangkap jika backend mengirim JSON String alih-alih Object
                             if (typeof res === 'string') {
                                 try {
                                     res = JSON.parse(res);
-                                } catch (e) {
-                                    // Biarkan sebagai string jika memang bukan format JSON
-                                }
+                                } catch (e) {}
                             }
-                            // Tangkap potensi return null akibat Tipe Data Date asli GAS
                             if (res === null) {
                                 reject(new Error("Server mengembalikan null. Pastikan backend tidak mengembalikan object Date asli."));
                                 return;
@@ -965,6 +958,8 @@
                         handler.cekRiwayat(payload);
                     } else if (action === 'swapProgramOrder') {
                         handler.swapProgramOrder(payload);
+                    } else if (action === 'toggleStatusProgram') {
+                        handler.toggleStatusProgram(payload);
                     } else {
                         reject(new Error("Action tidak dikenali: " + action));
                     }
@@ -983,17 +978,17 @@
             }
         }
 
-        // Mengecek apakah dokumen sudah selesai dimuat oleh iFrame GAS
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initApp);
         } else {
             initApp();
         }
 
-        // 1. PISAHKAN LOGIKA RENDER AGAR BISA DIPANGGIL 2 KALI (DARI CACHE & DARI SERVER)
         function prosesDataAplikasi(data) {
-            // Keamanan: pastikan data tidak kosong
             if (!data || !data.programs) return; 
+            
+            // Simpan data global untuk di-render ulang saat bahasa diganti
+            window.appData = data; 
             
             const donasiList = data.donasi || [];
             const verifiedDonasi = donasiList.filter(d => d.status === "Verified");
@@ -1007,60 +1002,52 @@
             renderProgramSelect();
         }
 
-        // 2. Fungsi inisiasi utama yang ANTI-MACET
         async function initApp() {
-            // Coba pakai cache jika browser mengizinkan (Biar 0 detik loading)
             try {
                 const cachedData = localStorage.getItem('wazisqi_data_cache');
                 if (cachedData) prosesDataAplikasi(JSON.parse(cachedData));
-            } catch(err) { 
-                /* Abaikan diam-diam jika memori HP/Browser diblokir */ 
-            }
+            } catch(err) { }
 
-            // Tarik data paling baru dari server
             try {
                 const data = await runGAS('getInitialData');
                 
                 if (data && data.programs) {
-                    // PENTING: Tampilkan datanya ke layar DULUAN!
                     prosesDataAplikasi(data); 
                     
-                    // Baru coba simpan ke cache belakangan
                     try {
                         localStorage.setItem('wazisqi_data_cache', JSON.stringify(data));
-                    } catch(e) { 
-                        /* Abaikan diam-diam jika Sandbox Google melarang penyimpanan */ 
-                    }
+                    } catch(e) { }
                 }
             } catch (e) { 
-                showToast("Gagal terhubung ke server");
+                showToast(currentLang === 'id' ? "Gagal terhubung ke server" : "Failed to connect to server");
             }
         }
 
         function renderDashboard(data) {
-            // Total Dana & Donatur
             const total = (data.donasi || []).filter(d => d.status === "Verified").reduce((a, b) => a + (Number(b.jumlah) || 0), 0);
             const count = (data.donasi || []).filter(d => d.status === "Verified").length;
             
             animateNumber('dashboard-total', total, 1500);
             document.getElementById('dashboard-donatur').innerText = count;
 
-            // Panggil render program dengan filter default 'Semua'
-            renderPrograms('Semua');
+            // Cari kategori yang sedang aktif untuk di-render ulang
+            let activeCat = 'Semua';
+            const activeBtn = document.querySelector('.cat-btn .bg-primary.text-white');
+            if(activeBtn) {
+               activeCat = activeBtn.parentElement.id.replace('btn-cat-', '');
+            }
+            renderPrograms(activeCat);
 
-            // Donatur Terbaru
             const recentContainer = document.getElementById('recent-donors-list');
             const recentDonors = (data.donasi || []).filter(d => d.status === "Verified" || d.status === "Menunggu Verifikasi" || d.status === "Ditolak").slice(-10).reverse();
             
             if(recentDonors.length === 0) {
-                recentContainer.innerHTML = `<p class="text-center text-[10px] text-slate-400 py-4 italic">Belum ada donasi terbaru</p>`;
+                recentContainer.innerHTML = `<p class="text-center text-[10px] text-slate-400 py-4 italic">${t('belumAdaDonasi')}</p>`;
             } else {
                 recentContainer.innerHTML = recentDonors.map(d => {
-                    const safeName = d.nama || 'Hamba Allah';
-                    const isAnonim = safeName.toLowerCase().includes('hamba allah');
+                    const safeName = d.nama || (currentLang === 'id' ? 'Hamba Allah' : 'Anonymous');
+                    const isAnonim = safeName.toLowerCase().includes('hamba allah') || safeName.toLowerCase().includes('anonymous');
                     const initial = String(safeName).charAt(0).toUpperCase();
-                    
-                    // Ambil waktu dari data (sesuaikan d.tanggal dengan nama kolom di GAS Anda jika berbeda)
                     const waktuDonasi = timeAgo(d.timestamp || d.tanggal); 
                     
                     let avatarContent = '';
@@ -1074,6 +1061,8 @@
                         avatarContent = initial;
                     }
                     
+                    const statusText = d.status === 'Verified' ? t('terverifikasi') : d.status === 'Ditolak' ? t('ditolak') : t('menungguVerif');
+
                     return `
                         <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${avatarClass}">
@@ -1085,11 +1074,10 @@
                                 <p class="text-[10px] font-bold mt-0.5 ${
                                     d.status === 'Verified' ? 'text-primary' : d.status === 'Ditolak' ? 'text-red-500' : 'text-orange-500'
                                 }">
-                                    ${d.status === 'Verified' ? 'Terverifikasi' : d.status === 'Ditolak' ? 'Ditolak' : 'Menunggu Verifikasi'}
-                                </p>                                               
+                                    ${statusText}
+                                </p>                                                 
                             </div>
                             
-                            <!-- Perubahan ada di div bawah ini -->
                             <div class="flex flex-col items-end shrink-0">
                                 <div class="font-bold text-primary text-sm">${fRupiah(d.jumlah)}</div>
                                 <div class="text-[9px] text-slate-400 mt-1 font-medium flex items-center gap-1">
@@ -1100,15 +1088,15 @@
                     `;
                 }).join('');
             }
-            // Menampilkan Titipan Doa
+            
             const doaContainer = document.getElementById('doa-list-container');
             const donasiDenganDoa = (data.donasi || []).filter(d => d.doa && d.doa.trim() !== "").slice(-10).reverse();
             
             if(donasiDenganDoa.length === 0) {
-                doaContainer.innerHTML = `<p class="text-xs text-slate-400 italic px-2">Belum ada titipan doa terbaru.</p>`;
+                doaContainer.innerHTML = `<p class="text-xs text-slate-400 italic px-2">${t('belumAdaDoa')}</p>`;
             } else {
                 doaContainer.innerHTML = donasiDenganDoa.map(d => {
-                    const safeName = d.nama || 'Hamba Allah';
+                    const safeName = d.nama || (currentLang === 'id' ? 'Hamba Allah' : 'Anonymous');
                     return `
                     <div class="min-w-[240px] max-w-[240px] bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm snap-center shrink-0 flex flex-col justify-between">
                         <p class="text-[11px] font-medium text-slate-600 italic leading-relaxed line-clamp-3">"${d.doa}"</p>
@@ -1118,7 +1106,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-[10px] font-bold text-slate-800 truncate">${safeName}</p>
-                                <p class="text-[9px] text-slate-400 truncate">Untuk: ${d.program}</p>
+                                <p class="text-[9px] text-slate-400 truncate">${t('untuk')}: ${d.program}</p>
                             </div>
                         </div>
                     </div>
@@ -1129,7 +1117,9 @@
 
         function renderPrograms(filter = 'Semua') {
             const container = document.getElementById('program-list-container');
-            const filtered = filter === 'Semua' ? appPrograms : appPrograms.filter(p => p.kategori === filter);
+            
+            const activePrograms = appPrograms.filter(p => p.status === "Aktif");
+            const filtered = filter === 'Semua' ? activePrograms : activePrograms.filter(p => p.kategori === filter);
             
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="text-center bg-white p-6 rounded-2xl border border-slate-100"><p class="text-xs text-slate-400 italic font-medium">Belum ada program di kategori ${filter}</p></div>`;
@@ -1142,10 +1132,10 @@
                 <div class="bg-white rounded-2xl p-4 flex flex-col gap-3 shadow-sm border border-slate-100">
                     <div class="flex gap-4 items-center">
                         <img src="${p.imageUrl}" class="w-24 h-24 object-cover rounded-xl bg-slate-50">
-                        <div class="flex-1">
+                        <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-center">
                                 <span class="text-[9px] font-black text-primary uppercase bg-emerald-50 px-2 py-0.5 rounded">${p.kategori}</span>
-                                <span class="text-[9px] text-slate-400 font-medium">Target: <b class="text-slate-600">${fRupiah(p.target)}</b></span>
+                                <span class="text-[9px] text-slate-400 font-medium">${t('target')}: <b class="text-slate-600">${fRupiah(p.target)}</b></span>
                             </div>
                             <h4 class="font-bold text-slate-800 text-sm mt-1 leading-tight flex items-center gap-1">
                                 ${p.nama}
@@ -1160,11 +1150,11 @@
                                     <div class="text-[10px] text-slate-500 flex items-center gap-1.5">
                                         <span class="flex items-center gap-0.5">
                                             <i class="ph-fill ph-users text-emerald-500 text-[11px]"></i>
-                                            Donatur: <b class="text-slate-700">${p.jumlahDonatur || 0}</b>
+                                            ${t('donatur')}: <b class="text-slate-700">${p.jumlahDonatur || 0}</b>
                                         </span>
                                         <span class="text-slate-300">•</span> 
                                         <span>
-                                            Terkumpul: <b class="text-emerald-600">${fRupiah(p.terkumpul)}</b>
+                                            ${t('terkumpul')}: <b class="text-emerald-600">${fRupiah(p.terkumpul)}</b>
                                         </span>
                                     </div>
                                     <span class="text-[10px] font-bold text-primary">${pct}%</span>
@@ -1173,14 +1163,13 @@
                         </div>
                     </div>
                     <button onclick="goToDonasi('${p.id}')" class="w-full bg-gradient-to-br from-primary to-primaryDark text-white shadow-md shadow-primary/30 hover:shadow-lg hover:shadow-primary/40 transition-all active:scale-95 font-bold py-3 rounded-xl text-xs">
-                        Donasi Sekarang
+                        ${t('donasiSekarang')}
                     </button>
                 </div>`;
             }).join('');
         }
 
         function filterProgram(cat) {
-            // Reset semua tombol ke warna putih/non-aktif
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 const iconDiv = btn.querySelector('.cat-icon');
                 const textSpan = btn.querySelector('.cat-text');
@@ -1192,7 +1181,6 @@
                 textSpan.classList.add('font-medium', 'text-slate-500');
             });
             
-            // Beri warna hijau pada tombol yang aktif
             const activeBtn = document.getElementById('btn-cat-' + cat);
             if (activeBtn) {
                 const iconDiv = activeBtn.querySelector('.cat-icon');
@@ -1205,17 +1193,15 @@
                 textSpan.classList.add('font-bold', 'text-slate-800');
             }
             
-            // Render ulang list program
             renderPrograms(cat);
         }
 
         function renderProgramSelect() {
             const select = document.getElementById('donasi-program');
-            select.innerHTML = '<option value="">-- Pilih Program --</option>' + 
+            select.innerHTML = `<option value="">${t('optPilihProgram')}</option>` + 
                 appPrograms.filter(p => p.status === "Aktif").map(p => `<option value="${p.id}" data-harga="${p.unitPrice}">${p.nama}</option>`).join('');
         }
 
-        // Logic UI Navigation
         function router(viewId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -1242,33 +1228,17 @@
         }
 
         function updateHargaSatuan() {
-            const programId =
-                document.getElementById('donasi-program').value;
-
-            const program =
-                appPrograms.find(p => p.id == programId);
-
-            const preview =
-                document.getElementById('program-preview');
+            const programId = document.getElementById('donasi-program').value;
+            const program = appPrograms.find(p => p.id == programId);
+            const preview = document.getElementById('program-preview');
 
             if(program){
-
                 preview.classList.remove('hidden');
-
-                document.getElementById('preview-image').src =
-                    program.imageUrl ||
-                    'https://placehold.co/600x400/e2e8f0/64748b?text=Program';
-
-                document.getElementById('preview-title').innerText =
-                    program.nama || '';
-
-                document.getElementById('preview-desc').innerText =
-                    program.deskripsi || '';
-                document.getElementById('preview-kategori').innerText =
-                    program.kategori || '';
-
-                document.getElementById('preview-target').innerText =
-                    'Target: ' + fRupiah(program.target || 0);      
+                document.getElementById('preview-image').src = program.imageUrl || 'https://placehold.co/600x400/e2e8f0/64748b?text=Program';
+                document.getElementById('preview-title').innerHTML = `${program.nama} <i class="ph-fill ph-seal-check text-blue-500 text-[15px] shrink-0"></i>`;
+                document.getElementById('preview-desc').innerText = program.deskripsi || '';
+                document.getElementById('preview-kategori').innerText = program.kategori || '';
+                document.getElementById('preview-target').innerText = t('target') + ': Rp ' + formatRibuan(program.target || 0);      
 
                 const pct = program.target > 0 ? Math.min(Math.round((program.terkumpul / program.target) * 100), 100) : 0;
                 document.getElementById('preview-progress').style.width = pct + '%';
@@ -1276,23 +1246,21 @@
 
                 document.getElementById('preview-terkumpul').innerText = fRupiah(program.terkumpul || 0);
                 document.getElementById('preview-donatur').innerText = program.jumlahDonatur || 0;    
-                // Tampilkan Kalkulator Zakat jika kategorinya Zakat
+                
                 const calcZakat = document.getElementById('kalkulator-zakat');
                 if (program.kategori && program.kategori.toLowerCase() === 'zakat') {
                     calcZakat.classList.remove('hidden');
-                    // Reset isi kalkulator setiap kali berganti program
                     document.getElementById('input-harta-zakat').value = '';
                     document.getElementById('hasil-hitung-zakat').innerText = 'Rp 0';
                     nominalZakatHitung = 0;
                 } else {
                     calcZakat.classList.add('hidden');
-                }                     
+                }                      
 
             }else{
-
                 preview.classList.add('hidden');
-
             }
+            
             const select = document.getElementById('donasi-program');
             const opt = select.options[select.selectedIndex];
             if(!opt || opt.value === "") {
@@ -1303,81 +1271,38 @@
             const area = document.getElementById('area-satuan');
             const inpNominal = document.getElementById('donasi-nominal');
 
-            const quickNominal =
-                document.getElementById('quick-nominal');
-
-            const quickUnit =
-                document.getElementById('quick-unit');
+            const quickNominal = document.getElementById('quick-nominal');
+            const quickUnit = document.getElementById('quick-unit');
 
             if (harga > 0) {
-
                 quickNominal.classList.add('hidden');
                 quickUnit.classList.remove('hidden');
-
                 area.style.display = 'block';
-
-                document.getElementById('info-harga-satuan').innerText =
-                    `Harga/Unit: ${fRupiah(harga)}`;
-
+                document.getElementById('info-harga-satuan').innerText = `${t('hargaUnit')}: ${fRupiah(harga)}`;
                 document.getElementById('donasi-unit').value = 1;
-
                 inpNominal.value = formatRibuan(harga);
-
                 inpNominal.readOnly = true;
                 inpNominal.setAttribute('tabindex', '-1');
 
-                inpNominal.classList.add(
-                    'bg-slate-100',
-                    'text-slate-600',
-                    'cursor-not-allowed',
-                    'nominal-locked'
-                );
-
-                document.getElementById('nominal-lock')
-                    .classList.remove('hidden');
-
-                document.getElementById('nominal-info')
-                    .classList.remove('hidden');
-
-                document.getElementById('nominal-info')
-                    .innerText =
-                    'Nominal dihitung otomatis berdasarkan jumlah unit yang dipilih.';
-
-                inpNominal.classList.remove(
-                    'focus:ring-2',
-                    'focus:ring-primary'
-                );                
+                inpNominal.classList.add('bg-slate-100', 'text-slate-600', 'cursor-not-allowed', 'nominal-locked');
+                document.getElementById('nominal-lock').classList.remove('hidden');
+                document.getElementById('nominal-info').classList.remove('hidden');
+                document.getElementById('nominal-info').innerText = t('nomOtomatis');
+                inpNominal.classList.remove('focus:ring-2', 'focus:ring-primary');                
 
             } else {
-
                 quickNominal.classList.remove('hidden');
                 quickUnit.classList.add('hidden');
-
                 area.style.display = 'none';
-
                 inpNominal.value = '';
-
                 inpNominal.readOnly = false;
                 inpNominal.removeAttribute('tabindex');
 
-                inpNominal.classList.remove(
-                    'bg-slate-100',
-                    'text-slate-600',
-                    'cursor-not-allowed',
-                    'nominal-locked'
-                );
+                inpNominal.classList.remove('bg-slate-100', 'text-slate-600', 'cursor-not-allowed', 'nominal-locked');
+                document.getElementById('nominal-lock').classList.add('hidden');
+                document.getElementById('nominal-info').classList.add('hidden');                
 
-                document.getElementById('nominal-lock')
-                    .classList.add('hidden');
-
-                document.getElementById('nominal-info')
-                    .classList.add('hidden');                
-
-                inpNominal.classList.add(
-                    'focus:ring-2',
-                    'focus:ring-primary'
-                );
-
+                inpNominal.classList.add('focus:ring-2', 'focus:ring-primary');
             }
         }
 
@@ -1391,9 +1316,7 @@
 
         function setNominal(nominal, btnElement) {
             document.getElementById('donasi-nominal').value = formatRibuan(nominal);
-            // Hapus warna dari semua tombol nominal
             document.querySelectorAll('.btn-quick-nom').forEach(btn => btn.classList.remove('active-btn'));
-            // Warnai tombol yang diklik
             if(btnElement) btnElement.classList.add('active-btn');
         }
 
@@ -1408,9 +1331,7 @@
         function setUnit(unit, btnElement) {
             document.getElementById('donasi-unit').value = unit;
             kalkulasiTotal();
-            // Hapus warna dari semua tombol unit
             document.querySelectorAll('.btn-quick-unit').forEach(btn => btn.classList.remove('active-btn'));
-            // Warnai tombol yang diklik
             if(btnElement) btnElement.classList.add('active-btn');
         }
 
@@ -1420,41 +1341,65 @@
             if(btnElement) btnElement.classList.add('active-btn');
         }
 
-        // Fungsi baru jika donatur mengetik unit secara manual
         function handleManualUnit() {
             kalkulasiTotal();
             document.querySelectorAll('.btn-quick-unit').forEach(btn => btn.classList.remove('active-btn'));
         }
 
+        let namaSebelumAnonim = "";
+
+        function handleAnonimToggle() {
+            const checkbox = document.getElementById('toggle-anonim');
+            const inputNama = document.getElementById('donasi-nama');
+            
+            if (checkbox.checked) {
+                // Simpan nama yang sudah diketik pengguna sebelum menghapusnya
+                if (inputNama.value !== "Hamba Allah" && inputNama.value !== "Anonymous") {
+                    namaSebelumAnonim = inputNama.value;
+                }
+                
+                // Isi otomatis dan ubah tampilan jadi terkunci (disabled)
+                inputNama.value = currentLang === 'id' ? "Hamba Allah" : "Anonymous";
+                inputNama.readOnly = true;
+                inputNama.classList.add('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+                inputNama.classList.remove('bg-white');
+            } else {
+                // Kembalikan nama semula dan buka kunci inputnya
+                inputNama.value = namaSebelumAnonim;
+                inputNama.readOnly = false;
+                inputNama.classList.remove('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+                inputNama.classList.add('bg-white');
+                inputNama.focus(); // Arahkan kursor langsung ke input
+            }
+        }
+
         function handleFormDonasi(e) {
             e.preventDefault();
+            
+            const waInput = document.getElementById('donasi-wa').value;
+            if (waInput.length < 10) {
+                showToast(currentLang === 'id' ? "Nomor WhatsApp minimal 10 angka!" : "WhatsApp number must be at least 10 digits!");
+                return;
+            }
+            
             const select = document.getElementById('donasi-program');
-            
-            // 1. Ambil nominal asli yang diketik
             const nominalAsli = Number(document.getElementById('donasi-nominal').value.replace(/\./g, ''));
-            
-            // 2. Buat Kode Unik acak antara 1 sampai 999
             const kodeUnik = Math.floor(Math.random() * 999) + 1;
-            
-            // 3. Tambahkan nominal asli dengan kode unik
             const totalTransfer = nominalAsli + kodeUnik;
 
-            // 4. Simpan data
             tempDonasiData = {
                 trxId: 'TRX' + Date.now(),
                 progId: select.value,
                 progNama: select.options[select.selectedIndex].text,
                 jumlah: totalTransfer,
                 nama: document.getElementById('donasi-nama').value,
-                kontak: document.getElementById('donasi-wa').value,
-                doa: document.getElementById('donasi-doa').value // <-- Menangkap isian doa
+                kontak: waInput, 
+                doa: document.getElementById('donasi-doa').value
             };
 
-            // Langsung arahkan ke halaman sukses
             document.getElementById('form-container').classList.add('hidden');
             document.getElementById('donasi-sukses').classList.remove('hidden');
 
-            // Cetak ke layar ringkasan
             document.getElementById('info-nominal-donasi').innerText = fRupiah(nominalAsli);
             document.getElementById('info-kode-unik').innerText = "+" + kodeUnik;
             document.getElementById('info-total-transfer').innerText = fRupiah(totalTransfer);            
@@ -1483,13 +1428,13 @@
             const btn = document.getElementById('btn-upload-bukti');
 
             if (fileInput.files.length === 0) {
-                showToast("Pilih file bukti transfer dahulu");
+                showToast(currentLang === 'id' ? "Pilih file bukti transfer dahulu" : "Please select a transfer proof file first");
                 return;
             }
 
             const file = fileInput.files[0];
             btn.disabled = true;
-            btn.innerHTML = '<i class="ph ph-circle-notch animate-spin"></i> Mengunggah...';
+            btn.innerHTML = '<i class="ph ph-circle-notch animate-spin"></i> ' + (currentLang === 'id' ? 'Mengunggah...' : 'Uploading...');
 
             const reader = new FileReader();
             reader.onload = async function(e) {
@@ -1512,7 +1457,7 @@
                     showToast("Gagal upload file");
                 }
                 btn.disabled = false;
-                btn.innerHTML = 'Kirim Bukti Pembayaran';
+                btn.innerHTML = `<span data-i18n="kirimBukti">${t('kirimBukti')}</span>`;
             };
             reader.readAsDataURL(file);
         }
@@ -1524,8 +1469,19 @@
             document.getElementById('donasi-finish').classList.add('hidden');   
             document.getElementById('program-preview').classList.add('hidden');  
             document.getElementById('quick-nominal').classList.add('hidden');
-            document.getElementById('quick-unit').classList.add('hidden');                   
+            document.getElementById('quick-unit').classList.add('hidden');                    
             currentTrxId = null;
+
+            // Reset status toggle anonim
+            const toggle = document.getElementById('toggle-anonim');
+            if (toggle) toggle.checked = false;
+            const inputNama = document.getElementById('donasi-nama');
+            if (inputNama) {
+                inputNama.readOnly = false;
+                inputNama.classList.remove('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+                inputNama.classList.add('bg-white');
+            }
+            namaSebelumAnonim = "";
         }
 
         async function selesaiDonasi() {
@@ -1550,7 +1506,6 @@
         function showLoader() { document.getElementById('nebula-loader').classList.remove('hidden'); }
         function hideLoader() { document.getElementById('nebula-loader').classList.add('hidden'); } 
 
-        // ADMIN FUNCTIONS
         function openModalLogin() { 
             if(isAdmin) router('admin');
             else document.getElementById('modal-login').classList.remove('hidden'); 
@@ -1563,17 +1518,16 @@
             const btn = document.getElementById('btn-cari-riwayat');
 
             if (!waInput || waInput.length < 9) {
-                showToast("Masukkan nomor WhatsApp yang valid (minimal 9 angka)");
+                showToast(currentLang === 'id' ? "Masukkan nomor WhatsApp yang valid (minimal 9 angka)" : "Enter a valid WhatsApp number (min 9 digits)");
                 return;
             }
 
             btn.disabled = true;
             btn.innerHTML = '<i class="ph ph-circle-notch animate-spin text-lg"></i>';
             container.classList.remove('hidden');
-            container.innerHTML = '<div class="text-center py-4 text-xs text-slate-400">Mencari data...</div>';
+            container.innerHTML = `<div class="text-center py-4 text-xs text-slate-400">${t('memuatData')}</div>`;
 
             try {
-                // Panggil fungsi cekRiwayat di backend
                 const res = await runGAS('cekRiwayat', waInput);
                 
                 if (res.success && res.data.length > 0) {
@@ -1581,7 +1535,7 @@
                         const isVerified = d.status === 'Verified';
                         const isRejected = d.status === 'Ditolak';
                         const statusColor = isVerified ? 'text-primary' : (isRejected ? 'text-red-500' : 'text-orange-500');
-                        const statusText = isVerified ? 'Terverifikasi' : (isRejected ? 'Ditolak' : 'Proses Verifikasi');
+                        const statusText = isVerified ? t('terverifikasi') : (isRejected ? t('ditolak') : t('menungguVerif'));
                         const icon = isVerified ? 'ph-check-circle' : (isRejected ? 'ph-x-circle' : 'ph-clock-clockwise');
                         
                         return `
@@ -1604,15 +1558,15 @@
                     container.innerHTML = `
                     <div class="text-center py-6 bg-slate-50 rounded-xl border border-dashed border-slate-200">
                         <i class="ph-fill ph-warning-circle text-2xl text-slate-300 mb-2"></i>
-                        <p class="text-xs text-slate-500 font-medium">Riwayat donasi tidak ditemukan.</p>
-                        <p class="text-[10px] text-slate-400 mt-1">Pastikan nomor WA yang dimasukkan sama dengan saat mendaftar.</p>
+                        <p class="text-xs text-slate-500 font-medium">${currentLang === 'id' ? 'Riwayat donasi tidak ditemukan.' : 'Donation history not found.'}</p>
+                        <p class="text-[10px] text-slate-400 mt-1">${currentLang === 'id' ? 'Pastikan nomor WA yang dimasukkan sama dengan saat mendaftar.' : 'Ensure the WA number entered is the same as when registering.'}</p>
                     </div>`;
                 }
             } catch (error) {
-                container.innerHTML = '<div class="text-center py-4 text-xs text-red-400">Gagal mengambil data dari server.</div>';
+                container.innerHTML = `<div class="text-center py-4 text-xs text-red-400">${currentLang === 'id' ? 'Gagal mengambil data dari server.' : 'Failed to retrieve data from server.'}</div>`;
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'Cari';
+                btn.innerHTML = t('btnCari');
             }
         }
 
@@ -1626,7 +1580,6 @@
             btn.innerText = 'Verifikasi...';
             
             try {
-                // Gunakan runGAS() agar otomatis pakai google.script.run atau fetch
                 const res = await runGAS('verifyLogin', { username: u, password: p });
                 
                 if (res.success) {
@@ -1678,7 +1631,6 @@
                 const data = await runGAS('getInitialData');
                 appPrograms = data.programs || [];
                 
-                // --- 1. RENDER TAB REKAP DANA ---
                 const donasiVerified = (data.donasi || []).filter(d => d.status === "Verified");
                 const kategoriList = [...new Set(appPrograms.map(p => p.kategori))];
                 const rekap = {};
@@ -1705,35 +1657,42 @@
                     </div>
                 `).join('');
 
-                // --- 2. RENDER TAB VERIFIKASI ---
-                const pending = (data.donasi || []).filter(d => d.status === "Menunggu Verifikasi");
+                const pending = (data.donasi || []).filter(d => d.status === "Menunggu Verifikasi").reverse();
                 const listV = document.getElementById('admin-list-verifikasi');
                 
                 if(pending.length === 0) {
                     listV.innerHTML = '<div class="text-center p-10 bg-white rounded-2xl text-slate-400 text-xs italic">Tidak ada antrian verifikasi</div>';
                 } else {
-                    listV.innerHTML = pending.map(d => `
+                    listV.innerHTML = pending.map(d => {
+                        const waktuDonasi = timeAgo(d.timestamp || d.tanggal);
+                        const waktuAsli = d.timestamp || d.tanggal || '';
+
+                        return `
                         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
                             <div class="min-w-0">
                                 <p class="font-black text-slate-800 text-sm">${d.nama}</p>
                                 <p class="text-[10px] text-primary font-bold">${d.program}</p>
+                                
+                                <div class="flex items-center gap-1 mt-0.5 text-[9px] text-slate-500 font-medium">
+                                    <i class="ph-fill ph-clock"></i> 
+                                    <span>${waktuDonasi} • ${waktuAsli}</span>
+                                </div>
+
                                 <p class="text-xs font-bold mt-1">${fRupiah(d.jumlah)}</p>
                                 ${d.bukti
-                                ? `<button onclick="openBuktiModal('${d.bukti}')" class="mt-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-bold border border-blue-100"><i class="ph-bold ph-image"></i> Lihat Bukti</button>`
-                                : '<span class="text-[9px] text-red-400 italic">Belum ada bukti</span>'
+                                ? `<button onclick="openBuktiModal('${d.bukti}')" class="mt-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-bold border border-blue-100"><i class="ph-bold ph-eye"></i> Lihat Bukti TF</button>`
+                                : '<span class="text-[9px] text-red-400 italic mt-2 block">Belum ada bukti</span>'
                                 }
                             </div>
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 shrink-0">
                                 <button onclick="handleReject('${d.id}')" class="bg-red-500 text-white p-3 rounded-xl shadow-lg active:scale-90 transition"><i class="ph-bold ph-x text-xl"></i></button>
                                 <button onclick="handleVerify('${d.id}')" class="bg-primary text-white p-3 rounded-xl shadow-lg active:scale-90 transition"><i class="ph-bold ph-check text-xl"></i></button>
                             </div>
                         </div>
-                    `).join('');
+                    `}).join('');
                 }
 
-                // --- 3. RENDER TAB PROGRAM ---
                 const listP = document.getElementById('admin-list-program');
-                // BARU - AMAN
                 listP.innerHTML = appPrograms.map((p, index) => {
                     const isFirst = index === 0;
                     const isLast = index === appPrograms.length - 1;
@@ -1756,13 +1715,18 @@
                             </button>
                         </div>
                         <div class="flex gap-1">
+                            <button data-id="${p.id}" class="btn-toggle p-2 rounded-lg transition ${p.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-200 text-slate-500'}" title="Tampil/Sembunyikan">
+                                <i class="ph-bold ${p.status === 'Aktif' ? 'ph-eye' : 'ph-eye-slash'}"></i>
+                            </button>
                             <button data-id="${p.id}" class="btn-edit p-2 bg-blue-50 text-blue-600 rounded-lg"><i class="ph-bold ph-pencil"></i></button>
                             <button data-id="${p.id}" class="btn-delete p-2 bg-red-50 text-red-600 rounded-lg"><i class="ph-bold ph-trash"></i></button>
                         </div>
                     </div>`;
                 }).join('');
 
-                // Pasang event listener setelah innerHTML selesai
+                document.querySelectorAll('.btn-toggle').forEach(btn => {
+                    btn.addEventListener('click', () => toggleProgramStatus(btn.dataset.id));
+                });
                 document.querySelectorAll('.btn-swap').forEach(btn => {
                     btn.addEventListener('click', () => swapProgram(btn.dataset.id, btn.dataset.target));
                 });
@@ -1783,7 +1747,7 @@
                 if(res.success) {
                     showToast("Donasi berhasil diverifikasi!");
                     loadAdminPanel();
-                    initApp(); // Refresh Dashboard data
+                    initApp(); 
                 }
             } catch(e) { showToast("Gagal verifikasi"); }
         }
@@ -1819,7 +1783,6 @@
             document.getElementById('prog-harga').value = p.unitPrice;
             document.getElementById('prog-target').value = p.target;
             
-            // Perbarui penanganan form gambar
             document.getElementById('prog-image-type').value = 'url';
             toggleImageType();
             document.getElementById('prog-image-url').value = p.imageUrl;
@@ -1833,7 +1796,6 @@
         async function handleSaveProgram(e) {
             e.preventDefault();
             
-            // Mencegah klik tombol 2 kali (Loading state)
             const btnSubmit = e.target.querySelector('button[type="submit"]');
             const originalText = btnSubmit.innerText;
             btnSubmit.disabled = true;
@@ -1843,7 +1805,6 @@
             let imageFileObj = null;
             let imageUrl = document.getElementById('prog-image-url').value;
 
-            // Proses konversi file menjadi Base64 jika opsi "Upload File" dipilih
             if (imgType === 'file') {
                 const fileInput = document.getElementById('prog-image-file');
                 if (fileInput.files.length > 0) {
@@ -1854,7 +1815,7 @@
                         reader.readAsDataURL(file);
                     });
                     imageFileObj = { base64: base64, type: file.type };
-                    imageUrl = ""; // Kosongkan URL karena menggunakan file
+                    imageUrl = ""; 
                 }
             }
 
@@ -1866,7 +1827,7 @@
                 unitPrice: parseInt(document.getElementById('prog-harga').value) || 0,
                 target: parseInt(document.getElementById('prog-target').value) || 0,
                 imageUrl: imageUrl, 
-                imageFile: imageFileObj, // Dikirim ke script yang sudah ada di backend
+                imageFile: imageFileObj, 
                 status: "Aktif"
             };
 
@@ -1883,7 +1844,6 @@
             } catch(err) { 
                 showToast("Terjadi kesalahan koneksi"); 
             } finally {
-                // Kembalikan tombol seperti semula
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = originalText;
             }
@@ -1900,6 +1860,24 @@
                 }
             } catch(e) { showToast("Gagal menghapus"); }
         }
+        
+        async function toggleProgramStatus(id) {
+            showLoader();
+            try {
+                const res = await runGAS('toggleStatusProgram', id);
+                if(res.success) { 
+                    showToast("Status program berhasil diubah"); 
+                    await initApp(); 
+                    await loadAdminPanel(); 
+                } else {
+                    showToast(res.message || "Gagal mengubah status");
+                }
+            } catch(e) { 
+                showToast("Terjadi kesalahan koneksi server"); 
+            } finally {
+                hideLoader();
+            }
+        }
 
         async function swapProgram(id1, id2) {
             if (!id1 || !id2 || id2 === 'null') return;
@@ -1908,9 +1886,7 @@
             try {
                 const res = await runGAS('swapProgramOrder', { id1: id1, id2: id2 });
                 if (res.success) {
-                    // Ambil data terbaru dari server
                     await initApp(); 
-                    // Render ulang panel admin
                     await loadAdminPanel(); 
                 } else {
                     showToast(res.message || "Gagal mengubah urutan program");
@@ -1925,7 +1901,7 @@
         function salinRekening() {
             const teks = document.getElementById('no_rekening').innerText;
             navigator.clipboard.writeText(teks).then(() => {
-                showToast("Nomor rekening disalin!");
+                showToast(currentLang === 'id' ? "Nomor rekening disalin!" : "Account number copied!");
             });
         }
 
@@ -1947,10 +1923,36 @@
             document.getElementById('finish-program').innerText = tempDonasiData.progNama;
             document.getElementById('finish-total').innerText = fRupiah(tempDonasiData.jumlah);
 
-            const pesanAjak = `Mari berlomba-lomba dalam kebaikan! Saya baru saja berdonasi untuk program *${tempDonasiData.progNama}* di WAZISQI Pondok Pesantren Al-Ittifaqiah.\n\nYuk, salurkan amal jariyahmu juga!`;
+            const pesanAjak = t('waPesan1') + tempDonasiData.progNama + t('waPesan2');
             const urlWhatsApp = `https://wa.me/?text=${encodeURIComponent(pesanAjak)}`;
             document.getElementById('btn-share-wa').href = urlWhatsApp;
-        }     
+
+            const iconSukses = document.getElementById('icon-sukses');
+            iconSukses.classList.remove('animate-pop'); 
+            void iconSukses.offsetWidth; 
+            iconSukses.classList.add('animate-pop');
+
+            if (typeof confetti === 'function') {
+                var count = 200;
+                var defaults = {
+                    origin: { y: 0.6 }, 
+                    zIndex: 9999, 
+                    colors: ['#10b981', '#f59e0b', '#ffffff'] 
+                };
+
+                function fire(particleRatio, opts) {
+                    confetti(Object.assign({}, defaults, opts, {
+                        particleCount: Math.floor(count * particleRatio)
+                    }));
+                }
+
+                fire(0.25, { spread: 26, startVelocity: 55 });
+                fire(0.2, { spread: 60 });
+                fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+                fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+                fire(0.1, { spread: 120, startVelocity: 45 });
+            }
+        }
 
         function closeBuktiModal() {
             document.getElementById('modal-bukti').classList.add('hidden');
@@ -1971,42 +1973,281 @@
         }); 
 
         function salinNominal() {
-            // Ambil teks dari elemen total transfer (misal: "Rp 50.123")
             const teks = document.getElementById('info-total-transfer').innerText;
-            
-            // Bersihkan teks: hapus "Rp", titik, dan spasi. Sisakan angkanya saja.
             const angkaSaja = teks.replace(/\D/g, '');
             
             navigator.clipboard.writeText(angkaSaja).then(() => {
-                showToast("Nominal disalin! Tempelkan di m-banking.");
+                showToast(currentLang === 'id' ? "Nominal disalin! Tempelkan di m-banking." : "Amount copied! Paste it in your m-banking.");
             }).catch(() => {
                 showToast("Gagal menyalin nominal");
             });
         }
-        // --- LOGIKA KALKULATOR ZAKAT ---
+
         let nominalZakatHitung = 0;
 
         function hitungZakat(input) {
-            // Bersihkan format titik, sisakan angka murni
             let angka = input.value.replace(/\D/g, '');
-            // Format ulang dengan titik (ribuan)
             input.value = formatRibuan(angka);
-            
-            // Rumus Zakat Mal/Penghasilan: 2,5%
             nominalZakatHitung = Math.floor(Number(angka) * 0.025);
-            
-            // Tampilkan hasilnya
             document.getElementById('hasil-hitung-zakat').innerText = 'Rp ' + formatRibuan(nominalZakatHitung);
         }
 
         function gunakanNominalZakat() {
             if (nominalZakatHitung > 0) {
-                // Gunakan fungsi setNominal yang sudah ada sebelumnya
                 setNominal(nominalZakatHitung);
-                showToast("Nominal zakat berhasil disalin ke form donasi");
+                showToast(currentLang === 'id' ? "Nominal zakat berhasil disalin ke form donasi" : "Zakat amount copied to donation form");
             } else {
-                showToast("Masukkan total harta/penghasilan Anda terlebih dahulu");
+                showToast(currentLang === 'id' ? "Masukkan total harta/penghasilan Anda terlebih dahulu" : "Please enter your total wealth/income first");
             }
+        }
+
+        // --- SISTEM MULTI-BAHASA (I18N) ---
+        let currentLang = 'id'; 
+        
+        const translations = {
+            id: {
+                wakafZakat: "Wakaf, Zakat, Infak dan Shadaqah<br>AL-ITTIFAQIAH",
+                totalDana: "Total Dana Terhimpun",
+                donatur: "Donatur",
+                terverifikasi: "Terverifikasi",
+                aktif: "Aktif",
+                katProgram: "Kategori Program",
+                semua: "Semua",
+                wakaf: "Wakaf",
+                zakat: "Zakat",
+                infaq: "Infaq",
+                kurban: "Kurban",
+                progKebaikan: "Program Kebaikan",
+                pilihProg: "Pilih program amal jariyah",
+                titipanDoa: "Titipan Doa",
+                memuatDoa: "Memuat doa-doa baik...",
+                donTerbaru: "Donatur Terbaru",
+                memuatData: "Memuat data...",
+                belumAdaDonasi: "Belum ada donasi terbaru",
+                belumAdaDoa: "Belum ada titipan doa terbaru.",
+                target: "Target",
+                terkumpul: "Terkumpul",
+                donasiSekarang: "Donasi Sekarang",
+                menungguVerif: "Menunggu Verifikasi",
+                ditolak: "Ditolak",
+                untuk: "Untuk",
+                formDonasi: "Formulir Donasi",
+                infaqSebagian: "Infaqkan sebagian harta terbaik Anda",
+                labelPilihProg: "Pilih Program",
+                optPilihProgram: "-- Pilih Program --",
+                labelJmlUnit: "Jumlah Unit/Porsi",
+                jmlUnitPopuler: "Jumlah Unit Populer",
+                lainnya: "Lainnya",
+                kalZakat: "Kalkulator Zakat",
+                labelHarta: "Total Harta / Penghasilan",
+                wajibZakat: "Wajib Zakat Dikeluarkan",
+                btnGunakanNominal: "Gunakan Nominal Ini",
+                labelNominal: "Nominal Donasi",
+                nomOtomatis: "Nominal dihitung otomatis berdasarkan jumlah unit yang dipilih.",
+                nomRekomendasi: "Nominal Rekomendasi",
+                labelNama: "Nama Lengkap",
+                phNama: "Contoh: Muhammad",
+                labelWa: "No. WhatsApp",
+                phWa: "Contoh: 08123456789",
+                labelDoa: 'Doa & Harapan <span class="text-slate-400 font-normal">(Opsional)</span>',
+                phDoa: "Tuliskan doa untuk Anda, keluarga, atau kerabat...",
+                btnLanjut: "Lanjutkan Pembayaran",
+                formTerkirim: "Formulir Terkirim",
+                silakanTransfer: "Silakan transfer sesuai nominal ke rekening di bawah ini:",
+                salinRek: "Salin No. Rek",
+                kodeUnik: "Kode Unik",
+                penanda: "Penanda",
+                biayaAdmin: "Biaya Admin",
+                gratis: "Gratis",
+                totalTransfer: "Total Transfer",
+                mohonTransfer: "Mohon transfer tepat hingga 3 digit terakhir agar memudahkan verifikasi.",
+                unggahBukti: "Unggah Bukti Transfer",
+                kirimBukti: "Kirim Bukti Pembayaran",
+                kembali: "Kembali",
+                jaza: "Jazakumullah Khairan Katsiran",
+                semogaHarta: "Semoga harta yang disedekahkan menjadi pembersih dan penambah keberkahan serta menjadi amal jariyah yang terus mengalir.",
+                idTrx: "ID Transaksi",
+                buktiDiterima: "Bukti transfer telah kami terima. Tim admin akan melakukan verifikasi dan notifikasi WhatsApp akan dikirim setelah proses selesai.",
+                ringkasanDonasi: "Ringkasan Donasi",
+                programLabel: "Program",
+                totalDonasiLabel: "Total Donasi",
+                bagikan: "Bagikan Kebaikan Ini",
+                kembaliBeranda: "Kembali ke Beranda",
+                lapTrans: "Laporan Transparansi",
+                pantauJejak: "Pantau jejak kebaikan & riwayat donasi Anda",
+                cekRiwayat: "Cek Riwayat Donasi",
+                gunakanWa: "Gunakan No. WhatsApp Anda",
+                btnCari: "Cari",
+                dokPenyaluran: "Dokumentasi Penyaluran",
+                danaTersalurkan: "Dana Tersalurkan",
+                tentangKami: "Tentang Kami",
+                mengenalLebih: "Mengenal lebih dekat lembaga WAZISQI",
+                profilLembaga: "Profil Lembaga",
+                teksProfil: "<span class='font-bold text-slate-800'>WAZISQI</span> (Wakaf, Zakat, Infak dan Shadaqah Al-Ittifaqiah) adalah lembaga resmi di bawah naungan Pondok Pesantren Al-Ittifaqiah Indralaya. Kami berdedikasi untuk mengelola, menyalurkan, dan memberdayakan dana umat secara profesional, transparan, dan amanah guna mendukung kemandirian pesantren dan kesejahteraan umat.",
+                visi: "Visi",
+                teksVisi: "\"Menjadi lembaga filantropi Islam yang terpercaya, profesional, dan mandiri dalam mengelola dana umat demi terwujudnya peradaban Islam yang rahmatan lil 'alamin.\"",
+                misi: "Misi",
+                teksMisi1: "Menghimpun dana ZISWAF secara transparan dan akuntabel.",
+                teksMisi2: "Menyalurkan dana umat tepat sasaran untuk program pendidikan, dakwah, dan sosial.",
+                teksMisi3: "Memberdayakan ekonomi umat melalui optimalisasi aset wakaf produktif.",
+                kontakAlamat: "Kontak & Alamat",
+                layananInfo: "Layanan informasi & kendala donasi",
+                adminWazisqi: "Admin WAZISQI",
+                website: "Website",
+                ponpes: "Pondok Pesantren",
+                alamatPonpes: "Jln. Lintas Timur Km. 36 Indralaya, Kab. Ogan Ilir, Sumatera Selatan",
+                followSosmed: "Follow Media Sosial Kami",
+                navBeranda: "Beranda",
+                navDonasi: "Donasi",
+                navLaporan: "Laporan",
+                navProfil: "Profil",
+                hargaUnit: "Harga/Unit",
+                donasiAnonim: "Donasi atas nama Hamba Allah",
+                waPesan1: `✨ *Fastabiqul Khairat!* Mari berlomba-lomba dalam kebaikan! ✨\n\nAlhamdulillah, hari ini saya baru saja menyalurkan donasi untuk program *`,
+                waPesan2: `* melalui WAZISQI Pondok Pesantren Al-Ittifaqiah.\n\nHarta yang kita berikan di jalan Allah adalah amal jariyah yang pahalanya akan terus mengalir meski kita sudah tiada. 🕌📚\n\nYuk, ambil bagian dalam kebaikan ini! Salurkan amal jariyah terbaikmu dengan mudah, transparan, dan cepat melalui tautan resmi berikut:\n👉 https://sites.google.com/view/wazisqiittifaqiah/\n\nSedikit dari kita, sangat berarti untuk masa depan santri dan generasi umat. Jazaakumullah Khairan Katsiran! 🙏`
+            },
+            en: {
+                wakafZakat: "Endowment, Zakat, Infaq and Shadaqah<br>AL-ITTIFAQIAH",
+                totalDana: "Total Funds Raised",
+                donatur: "Donors",
+                terverifikasi: "Verified",
+                aktif: "Active",
+                katProgram: "Program Categories",
+                semua: "All",
+                wakaf: "Endow.",
+                zakat: "Zakat",
+                infaq: "Infaq",
+                kurban: "Qurbani",
+                progKebaikan: "Charity Programs",
+                pilihProg: "Choose your charity program",
+                titipanDoa: "Prayers & Wishes",
+                memuatDoa: "Loading good prayers...",
+                donTerbaru: "Recent Donors",
+                memuatData: "Loading data...",
+                belumAdaDonasi: "No recent donations yet",
+                belumAdaDoa: "No recent prayers yet.",
+                target: "Target",
+                terkumpul: "Raised",
+                donasiSekarang: "Donate Now",
+                menungguVerif: "Awaiting Verification",
+                ditolak: "Rejected",
+                untuk: "For",
+                formDonasi: "Donation Form",
+                infaqSebagian: "Donate a portion of your best wealth",
+                labelPilihProg: "Select Program",
+                optPilihProgram: "-- Select Program --",
+                labelJmlUnit: "Number of Units/Portions",
+                jmlUnitPopuler: "Popular Unit Amounts",
+                lainnya: "Other",
+                kalZakat: "Zakat Calculator",
+                labelHarta: "Total Wealth / Income",
+                wajibZakat: "Zakat Obligation to Pay",
+                btnGunakanNominal: "Use This Amount",
+                labelNominal: "Donation Amount",
+                nomOtomatis: "Amount is calculated automatically based on selected units.",
+                nomRekomendasi: "Recommended Amount",
+                labelNama: "Full Name",
+                phNama: "e.g., Muhammad",
+                labelWa: "WhatsApp Number",
+                phWa: "e.g., 08123456789",
+                labelDoa: 'Prayers & Wishes <span class="text-slate-400 font-normal">(Optional)</span>',
+                phDoa: "Write a prayer for yourself, family, or relatives...",
+                btnLanjut: "Continue Payment",
+                formTerkirim: "Form Submitted",
+                silakanTransfer: "Please transfer the exact amount to the account below:",
+                salinRek: "Copy Acc. No",
+                kodeUnik: "Unique Code",
+                penanda: "Marker",
+                biayaAdmin: "Admin Fee",
+                gratis: "Free",
+                totalTransfer: "Total Transfer",
+                mohonTransfer: "Please transfer exactly up to the last 3 digits for easy verification.",
+                unggahBukti: "Upload Transfer Proof",
+                kirimBukti: "Submit Payment Proof",
+                kembali: "Back",
+                jaza: "May Allah reward you with goodness",
+                semogaHarta: "May the donated wealth be a purifier and bring blessings as an ongoing charity.",
+                idTrx: "Transaction ID",
+                buktiDiterima: "Transfer proof received. The admin team will verify and send a WhatsApp notification.",
+                ringkasanDonasi: "Donation Summary",
+                programLabel: "Program",
+                totalDonasiLabel: "Total Donation",
+                bagikan: "Share This Kindness",
+                kembaliBeranda: "Back to Home",
+                lapTrans: "Transparency Report",
+                pantauJejak: "Monitor your kindness trails & donation history",
+                cekRiwayat: "Check Donation History",
+                gunakanWa: "Use your WhatsApp Number",
+                btnCari: "Search",
+                dokPenyaluran: "Distribution Documentation",
+                danaTersalurkan: "Funds Distributed",
+                tentangKami: "About Us",
+                mengenalLebih: "Get to know the WAZISQI institution better",
+                profilLembaga: "Institution Profile",
+                teksProfil: "<span class='font-bold text-slate-800'>WAZISQI</span> (Endowment, Zakat, Infaq and Shadaqah Al-Ittifaqiah) is an official institution under the auspices of the Al-Ittifaqiah Islamic Boarding School Indralaya. We are dedicated to managing, distributing, and empowering public funds professionally, transparently, and trustworthily to support the independence of the boarding school and the welfare of the ummah.",
+                visi: "Vision",
+                teksVisi: "\"To become a trusted, professional, and independent Islamic philanthropy institution in managing public funds to realize an Islamic civilization that is a blessing to the universe.\"",
+                misi: "Mission",
+                teksMisi1: "Collecting ZISWAF funds transparently and accountably.",
+                teksMisi2: "Distributing public funds right on target for education, da'wah, and social programs.",
+                teksMisi3: "Empowering the ummah's economy through the optimization of productive endowment assets.",
+                kontakAlamat: "Contact & Address",
+                layananInfo: "Information service & donation constraints",
+                adminWazisqi: "WAZISQI Admin",
+                website: "Website",
+                ponpes: "Islamic Boarding School",
+                alamatPonpes: "Jln. Lintas Timur Km. 36 Indralaya, Ogan Ilir Regency, South Sumatra",
+                followSosmed: "Follow Our Social Media",
+                navBeranda: "Home",
+                navDonasi: "Donate",
+                navLaporan: "Reports",
+                navProfil: "Profile",
+                hargaUnit: "Price/Unit",
+                donasiAnonim: "Donate anonymously (Anonymous)",
+                waPesan1: `✨ *Fastabiqul Khairat!* Let's compete in goodness! ✨\n\nAlhamdulillah, today I just channeled a donation for the *`,
+                waPesan2: `* program through WAZISQI Al-Ittifaqiah Islamic Boarding School.\n\nWealth given in the way of Allah is an ongoing charity whose rewards will continue to flow even after we are gone. 🕌📚\n\nLet's take part in this goodness! Channel your best ongoing charity easily, transparently, and quickly through the following official link:\n👉 https://sites.google.com/view/wazisqiittifaqiah/\n\nA little from us means a lot for the future of the students and the generation of the ummah. May Allah reward you with goodness! 🙏`
+            }
+        };
+
+        function t(key) {
+            return translations[currentLang][key] || key;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'id' ? 'en' : 'id';
+            
+            document.getElementById('lang-text').innerText = currentLang.toUpperCase();
+            
+            // Translate statis text HTML
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    el.innerHTML = translations[currentLang][key];
+                }
+            });
+
+            // Translate placeholders (input form)
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[currentLang][key]) {
+                    el.placeholder = translations[currentLang][key];
+                }
+            });
+
+            // Render ulang bagian dinamis JavaScript
+            if (window.appData) {
+                renderDashboard(window.appData);
+                let activeCat = 'Semua';
+                const activeBtn = document.querySelector('.cat-btn .bg-primary.text-white');
+                if(activeBtn) {
+                   activeCat = activeBtn.parentElement.id.replace('btn-cat-', '');
+                }
+                renderPrograms(activeCat);
+                renderProgramSelect();
+            }
+            // Update tulisan di tombol Lanjut (Donasi Form)
+            document.getElementById('btn-submit-donasi').innerHTML = `<span>${t('btnLanjut')}</span> <i class="ph-bold ph-arrow-right"></i>`;
+            document.getElementById('btn-upload-bukti').innerHTML = `<span data-i18n="kirimBukti">${t('kirimBukti')}</span>`;
         }
     </script>
 </body>
