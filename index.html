@@ -94,7 +94,7 @@
                         WAZIS<span class="text-green-600">QI</span>
                     </h1>
                     <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-wider leading-tight" data-i18n="wakafZakat">
-                        Wakaf, Zakat, Infak dan Shadaqah<br>AL-ITTIFAQIAH
+                        Wakaf, Zakat, Infak dan Shadaqah<br>AL-ITTIFAQIAH INDRALAYA
                     </p>
                 </div>
             </div>
@@ -635,7 +635,7 @@
                                     <i class="ph-fill ph-buildings text-lg"></i> <span data-i18n="profilLembaga">Profil Lembaga</span>
                                 </h3>
                                 <p class="text-sm text-slate-600 leading-relaxed text-justify" data-i18n="teksProfil">
-                                    <span class="font-bold text-slate-800">WAZISQI</span> (Wakaf, Zakat, Infak dan Shadaqah Al-Ittifaqiah) adalah lembaga resmi di bawah naungan Pondok Pesantren Al-Ittifaqiah Indralaya. Kami berdedikasi untuk mengelola, menyalurkan, dan memberdayakan dana umat secara profesional, transparan, dan amanah guna mendukung kemandirian pesantren dan kesejahteraan umat.
+                                    <span class="font-bold text-slate-800">WAZISQI</span> (Wakaf, Zakat, Infak dan Shadaqah Al-Ittifaqiah Indralaya) adalah lembaga resmi di bawah naungan Pondok Pesantren Al-Ittifaqiah Indralaya. Kami berdedikasi untuk mengelola, menyalurkan, dan memberdayakan dana umat secara profesional, transparan, dan amanah guna mendukung kemandirian pesantren dan kesejahteraan umat.
                                 </p>
                             </div>
 
@@ -1221,9 +1221,20 @@
             if(viewId === 'admin') {
                 if(!isAdmin) {
                     router('beranda');
+                    return; // Mencegah proses lanjut ke bawah
                 }
             }
-            document.getElementById('main-content').scrollTop = 0;
+            
+            // 1. Paksa scroll instan
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) mainContent.scrollTop = 0;
+            window.scrollTo(0, 0);
+
+            // 2. Pengaman: Paksa scroll lagi setelah layar selesai mekar (delay 50ms)
+            setTimeout(() => {
+                if (mainContent) mainContent.scrollTop = 0;
+                window.scrollTo(0, 0);
+            }, 50);
         }
 
         function goToDonasi(progId) {
@@ -1231,7 +1242,12 @@
             setTimeout(() => {
                 const select = document.getElementById('donasi-program');
                 select.value = progId;
-                updateHargaSatuan();
+                updateHargaSatuan(); // Ini mengubah tinggi layar
+                
+                // Paksa scroll ke atas SETELAH harga dan gambar program muncul
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) mainContent.scrollTop = 0;
+                window.scrollTo(0, 0);
             }, 100);
         }
 
@@ -1407,6 +1423,9 @@
 
             document.getElementById('form-container').classList.add('hidden');
             document.getElementById('donasi-sukses').classList.remove('hidden');
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) mainContent.scrollTop = 0;
+            window.scrollTo(0, 0);
 
             document.getElementById('info-nominal-donasi').innerText = fRupiah(nominalAsli);
             document.getElementById('info-kode-unik').innerText = "+" + kodeUnik;
@@ -1490,6 +1509,11 @@
                 inputNama.classList.add('bg-white');
             }
             namaSebelumAnonim = "";
+
+            // Pengaman scroll
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) mainContent.scrollTop = 0;
+            window.scrollTo(0, 0);
         }
 
         async function selesaiDonasi() {
@@ -1620,20 +1644,21 @@
         }
 
         function switchAdminTab(tab) {
-            // Sembunyikan semua tab dan reset desain tombolnya
             ['rekap', 'verifikasi', 'program'].forEach(t => {
                 document.getElementById(`admin-tab-${t}`).classList.add('hidden');
                 document.getElementById(`tab-btn-${t}`).className = 'flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700';
             });
-            
-            // Tampilkan tab yang dipilih dan aktifkan tombolnya secara instan
             document.getElementById(`admin-tab-${tab}`).classList.remove('hidden');
             document.getElementById(`tab-btn-${tab}`).className = 'flex-1 py-2.5 text-xs font-bold rounded-lg bg-white shadow text-primary';
             
-            // Jika membuka tab verifikasi, pemicu ulang fitur live search agar sinkron
             if (tab === 'verifikasi' && typeof filterVerifikasi === 'function') {
                 filterVerifikasi();
             }
+
+            // --- TAMBAHKAN KODE INI AGAR OTOMATIS KE ATAS ---
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) mainContent.scrollTop = 0;
+            window.scrollTo(0, 0);
         }
 
         async function loadAdminPanel() {
@@ -1974,6 +1999,9 @@
         function tampilkanSuccessState(){
             document.getElementById('donasi-sukses').classList.add('hidden');
             document.getElementById('donasi-finish').classList.remove('hidden');
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) mainContent.scrollTop = 0;
+            window.scrollTo(0, 0);
             
             document.getElementById('finish-trx-id').innerText = currentTrxId || '-';
             document.getElementById('finish-program').innerText = tempDonasiData.progNama;
@@ -2062,7 +2090,7 @@
         
         const translations = {
             id: {
-                wakafZakat: "Wakaf, Zakat, Infak dan Shadaqah<br>AL-ITTIFAQIAH",
+                wakafZakat: "Wakaf, Zakat, Infak dan Shadaqah<br>AL-ITTIFAQIAH Indralaya",
                 totalDana: "Total Dana Terhimpun",
                 donatur: "Donatur",
                 terverifikasi: "Terverifikasi",
@@ -2139,7 +2167,7 @@
                 tentangKami: "Tentang Kami",
                 mengenalLebih: "Mengenal lebih dekat lembaga WAZISQI",
                 profilLembaga: "Profil Lembaga",
-                teksProfil: "<span class='font-bold text-slate-800'>WAZISQI</span> (Wakaf, Zakat, Infak dan Shadaqah Al-Ittifaqiah) adalah lembaga resmi di bawah naungan Pondok Pesantren Al-Ittifaqiah Indralaya. Kami berdedikasi untuk mengelola, menyalurkan, dan memberdayakan dana umat secara profesional, transparan, dan amanah guna mendukung kemandirian pesantren dan kesejahteraan umat.",
+                teksProfil: "<span class='font-bold text-slate-800'>WAZISQI</span> (Wakaf, Zakat, Infak dan Shadaqah Al-Ittifaqiah Indralaya) adalah lembaga resmi di bawah naungan Pondok Pesantren Al-Ittifaqiah Indralaya. Kami berdedikasi untuk mengelola, menyalurkan, dan memberdayakan dana umat secara profesional, transparan, dan amanah guna mendukung kemandirian pesantren dan kesejahteraan umat.",
                 visi: "Visi",
                 teksVisi: "\"Menjadi lembaga filantropi Islam yang terpercaya, profesional, dan mandiri dalam mengelola dana umat demi terwujudnya peradaban Islam yang rahmatan lil 'alamin.\"",
                 misi: "Misi",
@@ -2160,10 +2188,10 @@
                 hargaUnit: "Harga/Unit",
                 donasiAnonim: "Donasi atas nama Hamba Allah",
                 waPesan1: `✨ *Fastabiqul Khairat!* Mari berlomba-lomba dalam kebaikan! ✨\n\nAlhamdulillah, hari ini saya baru saja menyalurkan donasi untuk program *`,
-                waPesan2: `* melalui WAZISQI Pondok Pesantren Al-Ittifaqiah.\n\nHarta yang kita berikan di jalan Allah adalah amal jariyah yang pahalanya akan terus mengalir meski kita sudah tiada. 🕌📚\n\nYuk, ambil bagian dalam kebaikan ini! Salurkan amal jariyah terbaikmu dengan mudah, transparan, dan cepat melalui tautan resmi berikut:\n👉 https://sites.google.com/view/wazisqiittifaqiah/\n\nSedikit dari kita, sangat berarti untuk masa depan santri dan generasi umat. Jazaakumullah Khairan Katsiran! 🙏`
+                waPesan2: `* melalui WAZISQI Pondok Pesantren Al-Ittifaqiah Indralaya.\n\nHarta yang kita berikan di jalan Allah adalah amal jariyah yang pahalanya akan terus mengalir meski kita sudah tiada. 🕌📚\n\nYuk, ambil bagian dalam kebaikan ini! Salurkan amal jariyah terbaikmu dengan mudah, transparan, dan cepat melalui tautan resmi berikut:\n👉 https://sites.google.com/view/wazisqiittifaqiah/\n\nSedikit dari kita, sangat berarti untuk masa depan santri dan generasi umat. Jazaakumullah Khairan Katsiran! 🙏`
             },
             en: {
-                wakafZakat: "Endowment, Zakat, Infaq and Shadaqah<br>AL-ITTIFAQIAH",
+                wakafZakat: "Endowment, Zakat, Infaq and Shadaqah<br>AL-ITTIFAQIAH Indralaya",
                 totalDana: "Total Funds Raised",
                 donatur: "Donors",
                 terverifikasi: "Verified",
@@ -2240,7 +2268,7 @@
                 tentangKami: "About Us",
                 mengenalLebih: "Get to know the WAZISQI institution better",
                 profilLembaga: "Institution Profile",
-                teksProfil: "<span class='font-bold text-slate-800'>WAZISQI</span> (Endowment, Zakat, Infaq and Shadaqah Al-Ittifaqiah) is an official institution under the auspices of the Al-Ittifaqiah Islamic Boarding School Indralaya. We are dedicated to managing, distributing, and empowering public funds professionally, transparently, and trustworthily to support the independence of the boarding school and the welfare of the ummah.",
+                teksProfil: "<span class='font-bold text-slate-800'>WAZISQI</span> (Endowment, Zakat, Infaq and Shadaqah Al-Ittifaqiah Indralaya) is an official institution under the auspices of the Al-Ittifaqiah Islamic Boarding School Indralaya. We are dedicated to managing, distributing, and empowering public funds professionally, transparently, and trustworthily to support the independence of the boarding school and the welfare of the ummah.",
                 visi: "Vision",
                 teksVisi: "\"To become a trusted, professional, and independent Islamic philanthropy institution in managing public funds to realize an Islamic civilization that is a blessing to the universe.\"",
                 misi: "Mission",
@@ -2261,7 +2289,7 @@
                 hargaUnit: "Price/Unit",
                 donasiAnonim: "Donate anonymously (Anonymous)",
                 waPesan1: `✨ *Fastabiqul Khairat!* Let's compete in goodness! ✨\n\nAlhamdulillah, today I just channeled a donation for the *`,
-                waPesan2: `* program through WAZISQI Al-Ittifaqiah Islamic Boarding School.\n\nWealth given in the way of Allah is an ongoing charity whose rewards will continue to flow even after we are gone. 🕌📚\n\nLet's take part in this goodness! Channel your best ongoing charity easily, transparently, and quickly through the following official link:\n👉 https://sites.google.com/view/wazisqiittifaqiah/\n\nA little from us means a lot for the future of the students and the generation of the ummah. May Allah reward you with goodness! 🙏`
+                waPesan2: `* program through WAZISQI Al-Ittifaqiah Indralaya Islamic Boarding School.\n\nWealth given in the way of Allah is an ongoing charity whose rewards will continue to flow even after we are gone. 🕌📚\n\nLet's take part in this goodness! Channel your best ongoing charity easily, transparently, and quickly through the following official link:\n👉 https://sites.google.com/view/wazisqiittifaqiah/\n\nA little from us means a lot for the future of the students and the generation of the ummah. May Allah reward you with goodness! 🙏`
             }
         };
 
