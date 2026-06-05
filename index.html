@@ -1169,7 +1169,7 @@
             container.innerHTML = filtered.map(p => {
                 const pct = p.target > 0 ? Math.min(Math.round((p.terkumpul / p.target) * 100), 100) : 0;
                 return `
-                <div class="bg-white rounded-2xl p-4 flex flex-col gap-3 shadow-sm border border-slate-100">
+                <div onclick="goToDonasi('${p.id}')" class="bg-white rounded-2xl p-4 flex flex-col gap-3 shadow-sm border border-slate-100 hover:shadow-md hover:border-emerald-300 transition-all duration-300 cursor-pointer group">
                     <div class="flex gap-4 items-center">
                         <img src="${p.imageUrl}" class="w-24 h-24 object-cover rounded-xl bg-slate-50">
                         <div class="flex-1 min-w-0">
