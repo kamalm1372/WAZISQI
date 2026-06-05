@@ -997,7 +997,6 @@
         function prosesDataAplikasi(data) {
             if (!data || !data.programs) return; 
             
-            // Simpan data global untuk di-render ulang saat bahasa diganti
             window.appData = data; 
             
             const donasiList = data.donasi || [];
@@ -1010,6 +1009,37 @@
 
             renderDashboard(data);
             renderProgramSelect();
+
+            // Panggil fungsi pembaca URL setelah data selesai dimuat
+            bacaUrlProgram();
+        }
+
+        // Fungsi baru untuk membaca link yang dibagikan donatur
+        function bacaUrlProgram() {
+            const path = window.location.pathname.substring(1);
+            const menuUtama = ['beranda', 'donasi', 'laporan', 'kontak', 'admin'];
+
+            // Jika URL ada isinya dan bukan menu utama (berarti itu link program)
+            if (path && !menuUtama.includes(path)) {
+                
+                // Cari program yang "slug"-nya cocok dengan path URL
+                const targetProg = appPrograms.find(p => buatSlug(p.nama) === path);
+
+                if (targetProg) {
+                    // Pindah ke tab donasi
+                    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                    document.getElementById('view-donasi').classList.add('active');
+                    if (document.getElementById('nav-donasi')) document.getElementById('nav-donasi').classList.add('active');
+
+                    // Pilih program otomatis
+                    setTimeout(() => {
+                        const select = document.getElementById('donasi-program');
+                        select.value = targetProg.id;
+                        updateHargaSatuan();
+                    }, 100);
+                }
+            }
         }
 
         async function initApp() {
@@ -1254,14 +1284,34 @@
             }, 50);
         }
 
+        // Fungsi pembuat URL cantik (Slug)
+        function buatSlug(teks) {
+            return teks.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        }
+
         function goToDonasi(progId) {
-            router('donasi');
+            const p = appPrograms.find(x => x.id === progId);
+            if (!p) return;
+
+            // Buat URL dari nama program
+            const slug = buatSlug(p.nama);
+            
+            // Ubah tampilan ke tab donasi
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-donasi').classList.add('active');
+            const nav = document.getElementById('nav-donasi');
+            if(nav) nav.classList.add('active');
+
+            // Ubah URL di atas browser tanpa me-refresh halaman
+            window.history.pushState({}, '', '/' + slug);
+
+            // Pilih program otomatis di form
             setTimeout(() => {
                 const select = document.getElementById('donasi-program');
                 select.value = progId;
-                updateHargaSatuan(); // Ini mengubah tinggi layar
+                updateHargaSatuan();
                 
-                // Paksa scroll ke atas SETELAH harga dan gambar program muncul
                 const mainContent = document.getElementById('main-content');
                 if (mainContent) mainContent.scrollTop = 0;
                 window.scrollTo(0, 0);
