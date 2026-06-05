@@ -281,9 +281,18 @@
                                             </span>
                                         </div>
                                         <span id="preview-pct" class="text-[10px] font-bold text-primary">0%</span>
+
                                     </div>
                                 </div>
                             </div>
+                                <div id="preview-donatur-list" class="mt-4 pt-4 border-t border-slate-100 hidden">
+                                    <p class="text-[10px] font-bold text-slate-700 mb-2 flex items-center gap-1.5">
+                                        <i class="ph-fill ph-clock-counter-clockwise text-emerald-500 text-sm"></i> 5 Donatur Terbaru Program Ini
+                                    </p>
+                                    <div id="preview-donatur-items" class="space-y-2">
+                                        <!-- List donatur akan dimuat di sini -->
+                                    </div>
+                                </div>
                         </div>
 
                         <div id="area-satuan" style="display:none;" class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
@@ -1336,7 +1345,50 @@
                 document.getElementById('preview-pct').innerText = pct + '%'; 
 
                 document.getElementById('preview-terkumpul').innerText = fRupiah(program.terkumpul || 0);
-                document.getElementById('preview-donatur').innerText = program.jumlahDonatur || 0;    
+                document.getElementById('preview-donatur').innerText = program.jumlahDonatur || 0; 
+                // --- KODE BARU: Memuat 5 Donatur Terbaru Khusus Program Ini ---
+                const donaturListContainer = document.getElementById('preview-donatur-list');
+                const donaturItems = document.getElementById('preview-donatur-items');
+                
+                if (window.appData && window.appData.donasi) {
+                    // Filter donasi khusus program ini yang statusnya sudah Verified
+                    const donasiProgramIni = window.appData.donasi
+                        .filter(d => d.progId === program.id && d.status === "Verified")
+                        .reverse() // Balik agar yang terbaru ada di atas
+                        .slice(0, 5); // Potong, ambil 5 saja
+                    
+                    if (donasiProgramIni.length > 0) {
+                        donaturListContainer.classList.remove('hidden');
+                        donaturItems.innerHTML = donasiProgramIni.map(d => {
+                            const safeName = d.nama || (currentLang === 'id' ? 'Hamba Allah' : 'Anonymous');
+                            const isAnonim = safeName.toLowerCase().includes('hamba allah') || safeName.toLowerCase().includes('anonymous');
+                            const initial = String(safeName).charAt(0).toUpperCase();
+                            const avatarClass = isAnonim ? 'bg-slate-100 text-slate-400' : 'bg-emerald-50 text-emerald-600 font-bold';
+                            const avatarContent = isAnonim ? '<i class="ph-fill ph-user text-[10px]"></i>' : initial;
+                            
+                            return `
+                                <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-100">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <div class="w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-[10px] ${avatarClass}">
+                                            ${avatarContent}
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-[10px] font-bold text-slate-700 truncate">${safeName}</p>
+                                            <p class="text-[8px] text-slate-400">${timeAgo(d.timestamp || d.tanggal)}</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] font-black text-emerald-600 shrink-0">${fRupiah(d.jumlah)}</p>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        donaturListContainer.classList.remove('hidden');
+                        donaturItems.innerHTML = `<p class="text-[10px] text-slate-400 italic text-center py-2 bg-slate-50 rounded-xl border border-dashed border-slate-200">Jadilah yang pertama berdonasi di program ini!</p>`;
+                    }
+                } else {
+                    donaturListContainer.classList.add('hidden');
+                }
+                // --- AKHIR KODE BARU ---   
                 
                 const calcZakat = document.getElementById('kalkulator-zakat');
                 if (program.kategori && program.kategori.toLowerCase() === 'zakat') {
@@ -2257,7 +2309,7 @@
                 hargaUnit: "Harga/Unit",
                 donasiAnonim: "Donasi atas nama Hamba Allah",
                 waPesan1: `✨ *Fastabiqul Khairat!* Mari berlomba-lomba dalam kebaikan! ✨\n\nAlhamdulillah, hari ini saya baru saja menyalurkan donasi untuk program *`,
-                waPesan2: `* melalui WAZISQI Pondok Pesantren Al-Ittifaqiah Indralaya.\n\nHarta yang kita berikan di jalan Allah adalah amal jariyah yang pahalanya akan terus mengalir meski kita sudah tiada. 🕌📚\n\nYuk, ambil bagian dalam kebaikan ini! Salurkan amal jariyah terbaikmu dengan mudah, transparan, dan cepat melalui tautan resmi berikut:\n👉 https://sites.google.com/view/wazisqiittifaqiah/\n\nSedikit dari kita, sangat berarti untuk masa depan santri dan generasi umat. Jazaakumullah Khairan Katsiran! 🙏`
+                waPesan2: `* melalui WAZISQI Pondok Pesantren Al-Ittifaqiah Indralaya.\n\nHarta yang kita berikan di jalan Allah adalah amal jariyah yang pahalanya akan terus mengalir meski kita sudah tiada. 🕌📚\n\nYuk, ambil bagian dalam kebaikan ini! Salurkan amal jariyah terbaikmu dengan mudah, transparan, dan cepat melalui tautan resmi berikut:\n👉 https://wazisqi.org/\n\nSedikit dari kita, sangat berarti untuk masa depan santri dan generasi umat. Jazaakumullah Khairan Katsiran! 🙏`
             },
             en: {
                 wakafZakat: "Endowment, Zakat, Infaq and Shadaqah<br>AL-ITTIFAQIAH Indralaya",
@@ -2359,7 +2411,7 @@
                 hargaUnit: "Price/Unit",
                 donasiAnonim: "Donate anonymously (Anonymous)",
                 waPesan1: `✨ *Fastabiqul Khairat!* Let's compete in goodness! ✨\n\nAlhamdulillah, today I just channeled a donation for the *`,
-                waPesan2: `* program through WAZISQI Al-Ittifaqiah Indralaya Islamic Boarding School.\n\nWealth given in the way of Allah is an ongoing charity whose rewards will continue to flow even after we are gone. 🕌📚\n\nLet's take part in this goodness! Channel your best ongoing charity easily, transparently, and quickly through the following official link:\n👉 https://sites.google.com/view/wazisqiittifaqiah/\n\nA little from us means a lot for the future of the students and the generation of the ummah. May Allah reward you with goodness! 🙏`
+                waPesan2: `* program through WAZISQI Al-Ittifaqiah Indralaya Islamic Boarding School.\n\nWealth given in the way of Allah is an ongoing charity whose rewards will continue to flow even after we are gone. 🕌📚\n\nLet's take part in this goodness! Channel your best ongoing charity easily, transparently, and quickly through the following official link:\n👉 https://wazisqi.org/\n\nA little from us means a lot for the future of the students and the generation of the ummah. May Allah reward you with goodness! 🙏`
             }
         };
 
