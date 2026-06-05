@@ -1224,8 +1224,7 @@
             }
         }
 
-        // Ubah fungsi router agar memperbarui URL di browser tanpa reload
-        function router(viewId, pushState = true) {
+        function router(viewId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             
@@ -1233,17 +1232,27 @@
             const nav = document.getElementById(`nav-${viewId}`);
             if(nav) nav.classList.add('active');
 
-            if (pushState) {
+            if(viewId === 'admin') {
+                if(!isAdmin) {
+                    router('beranda');
+                    return; 
+                }
+            }
+            
+            // --- KODE BARU: Mengubah URL sesuai tab yang diklik ---
+            if (window.location.pathname !== '/' + viewId) {
                 window.history.pushState({}, '', '/' + viewId);
             }
 
-            // Scroll ke atas
             const mainContent = document.getElementById('main-content');
             if (mainContent) mainContent.scrollTop = 0;
-        }
+            window.scrollTo(0, 0);
 
-        // Panggil di akhir fungsi initApp()
-        // initApp().then(() => handleInitialRoute());
+            setTimeout(() => {
+                if (mainContent) mainContent.scrollTop = 0;
+                window.scrollTo(0, 0);
+            }, 50);
+        }
 
         function goToDonasi(progId) {
             router('donasi');
@@ -2198,7 +2207,7 @@
                 hargaUnit: "Harga/Unit",
                 donasiAnonim: "Donasi atas nama Hamba Allah",
                 waPesan1: `✨ *Fastabiqul Khairat!* Mari berlomba-lomba dalam kebaikan! ✨\n\nAlhamdulillah, hari ini saya baru saja menyalurkan donasi untuk program *`,
-                waPesan2: `* melalui WAZISQI Pondok Pesantren Al-Ittifaqiah Indralaya.\n\nHarta yang kita berikan di jalan Allah adalah amal jariyah yang pahalanya akan terus mengalir meski kita sudah tiada. 🕌📚\n\nYuk, ambil bagian dalam kebaikan ini! Salurkan amal jariyah terbaikmu dengan mudah, transparan, dan cepat melalui tautan resmi berikut:\n👉 https://wazisqi.org/\n\nSedikit dari kita, sangat berarti untuk masa depan santri dan generasi umat. Jazaakumullah Khairan Katsiran! 🙏`
+                waPesan2: `* melalui WAZISQI Pondok Pesantren Al-Ittifaqiah Indralaya.\n\nHarta yang kita berikan di jalan Allah adalah amal jariyah yang pahalanya akan terus mengalir meski kita sudah tiada. 🕌📚\n\nYuk, ambil bagian dalam kebaikan ini! Salurkan amal jariyah terbaikmu dengan mudah, transparan, dan cepat melalui tautan resmi berikut:\n👉 https://sites.google.com/view/wazisqiittifaqiah/\n\nSedikit dari kita, sangat berarti untuk masa depan santri dan generasi umat. Jazaakumullah Khairan Katsiran! 🙏`
             },
             en: {
                 wakafZakat: "Endowment, Zakat, Infaq and Shadaqah<br>AL-ITTIFAQIAH Indralaya",
@@ -2402,7 +2411,31 @@
         // Perintahkan aplikasi untuk langsung menyedot data saat pertama kali dibuka
         document.addEventListener('DOMContentLoaded', () => {
             muatLaporanPenyaluran();
-        });        
+        });  
+
+        // --- SISTEM PEMBACA URL (MENCEGAH KEMBALI KE BERANDA SAAT REFRESH) ---
+        function bacaUrlSaatIni() {
+            const path = window.location.pathname.substring(1); // Ambil kata setelah garis miring (/)
+            const menuUtama = ['beranda', 'donasi', 'laporan', 'kontak', 'admin'];
+            
+            if (menuUtama.includes(path)) {
+                // Paksa pindah tampilan tanpa pushState lagi
+                document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                
+                const targetView = document.getElementById('view-' + path);
+                const targetNav = document.getElementById('nav-' + path);
+                
+                if (targetView) targetView.classList.add('active');
+                if (targetNav) targetNav.classList.add('active');
+            }
+        }
+
+        // Jalankan saat halaman di-refresh atau link dibagikan ke orang lain
+        document.addEventListener('DOMContentLoaded', bacaUrlSaatIni);
+        
+        // Jalankan jika user menekan tombol "Back/Kembali" di HP mereka
+        window.addEventListener('popstate', bacaUrlSaatIni);              
     </script>
 </body>
 </html>
