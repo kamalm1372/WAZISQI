@@ -1191,6 +1191,12 @@
                                 <i class="ph-fill ph-seal-check text-blue-500 text-[15px] shrink-0"></i>
                             </h4>
                             ${p.deskripsi ? `<p class="text-[10px] text-slate-500 mt-1 leading-snug">${p.deskripsi}</p>` : ''}
+                            ${p.unitPrice > 0 ? `
+                            <div class="mt-2.5">
+                                <span class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-200 text-[10px] font-bold text-amber-700 rounded-md shadow-sm">
+                                    <i class="ph-fill ph-tag"></i> Mulai ${fRupiah(p.unitPrice)} / porsi
+                                </span>
+                            </div>` : ''}
                             <div class="mt-2">
                                 <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
                                     <div class="bg-primary h-full" style="width: ${pct}%"></div>
