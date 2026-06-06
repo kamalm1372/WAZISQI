@@ -313,12 +313,18 @@
                                 
                                 <!-- Tombol pilihan -->
                                 <div id="quick-unit" class="mt-3">
-                                    <div class="grid grid-cols-5 gap-2">
-                                        <button type="button" onclick="setUnit(1, this)" class="quick-btn btn-quick-unit active-btn">1</button>
+                                    <!-- Pilihan Unit 2 Baris -->
+                                    <div class="grid grid-cols-4 gap-2 mb-2">
+                                        <button type="button" onclick="setUnit(1, this)" class="quick-btn btn-quick-unit">1</button>
+                                        <button type="button" onclick="setUnit(2, this)" class="quick-btn btn-quick-unit">2</button>
+                                        <button type="button" onclick="setUnit(3, this)" class="quick-btn btn-quick-unit">3</button>
                                         <button type="button" onclick="setUnit(5, this)" class="quick-btn btn-quick-unit">5</button>
+                                    </div>
+                                    <div class="grid grid-cols-4 gap-2">
                                         <button type="button" onclick="setUnit(10, this)" class="quick-btn btn-quick-unit">10</button>
+                                        <button type="button" onclick="setUnit(15, this)" class="quick-btn btn-quick-unit">15</button>
                                         <button type="button" onclick="setUnit(20, this)" class="quick-btn btn-quick-unit">20</button>
-                                        <button type="button" onclick="toggleInputUnit()" class="quick-btn btn-quick-unit bg-orange-50 text-orange-600 border-orange-200" data-i18n="lainnya">Lainnya</button>
+                                        <button type="button" onclick="toggleInputUnit()" class="quick-btn btn-quick-unit bg-orange-50 text-orange-600 border-orange-200">Lainnya</button>
                                     </div>
                                 </div>
                             </div>
@@ -340,19 +346,19 @@
                                     Nominal dihitung otomatis berdasarkan jumlah unit yang dipilih.
                                 </p>
                                 
-                                <div id="quick-nominal" class="mt-3.5 hidden">
-                                    <p class="text-xs font-bold text-emerald-700 flex items-center gap-1 mb-2">
-                                        <i class="ph-fill ph-lightning"></i>
-                                        <span data-i18n="nomRekomendasi">Nominal Rekomendasi</span>
-                                    </p>
-                                    <div class="grid grid-cols-3 gap-2">
-                                        <button type="button" onclick="setNominal(50000, this)" class="quick-btn btn-quick-nom">50rb</button>
-                                        <button type="button" onclick="setNominal(100000, this)" class="quick-btn btn-quick-nom">100rb</button>
-                                        <button type="button" onclick="setNominal(250000, this)" class="quick-btn btn-quick-nom">250rb</button>
-                                        <button type="button" onclick="setNominal(500000, this)" class="quick-btn btn-quick-nom">500rb</button>
-                                        <button type="button" onclick="setNominal(1000000, this)" class="quick-btn btn-quick-nom">1 Juta</button>
-                                        <button type="button" onclick="focusNominal(this)" class="quick-btn btn-quick-nom bg-orange-50 text-orange-600 border-orange-200" data-i18n="lainnya">Lainnya</button>
+                                <div id="quick-nominal" class="mt-3 hidden">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <!-- Baris 1: Pilihan Standar -->
+                                        <button type="button" onclick="setNominal(50000, this)" class="quick-btn btn-quick-nom">Rp 50.000</button>
+                                        <button type="button" onclick="setNominal(100000, this)" class="quick-btn btn-quick-nom">Rp 100.000</button>
+                                        <!-- Baris 2: Pilihan Menengah & Tinggi -->
+                                        <button type="button" onclick="setNominal(250000, this)" class="quick-btn btn-quick-nom">Rp 250.000</button>
+                                        <button type="button" onclick="setNominal(500000, this)" class="quick-btn btn-quick-nom">Rp 500.000</button>
                                     </div>
+                                    <!-- Tombol "Lainnya" dibuat lebar di bawah agar mencolok -->
+                                    <button type="button" onclick="focusNominal(this)" class="w-full mt-2 quick-btn btn-quick-nom bg-slate-50 text-slate-600 border-slate-200" data-i18n="lainnya">
+                                        Atau masukkan nominal lainnya
+                                    </button>
                                 </div>
                             </div>
 
