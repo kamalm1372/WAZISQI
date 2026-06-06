@@ -336,26 +336,27 @@
                             <div>
                                 <label class="block text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1.5" data-i18n="labelNominal">
                                     Nominal Donasi
-                                </label>                           
-                                <div class="relative">
+                                </label> 
+
+                                <!-- === NO 1: INI ADALAH WRAPPER INPUT YANG DISUMPUTKAN === -->
+                                <div id="wrapper-input-nominal" class="hidden relative mb-4">
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-700 font-bold text-sm">Rp</span>
                                     <input type="text" id="donasi-nominal" placeholder="0" class="w-full bg-white border border-emerald-200 rounded-xl pl-12 pr-10 py-3 focus:ring-2 focus:ring-primary outline-none font-bold text-emerald-600" required>
                                     <i id="nominal-lock" class="ph-fill ph-lock absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500 hidden text-sm"></i>
                                 </div>
+                                <!-- ======================================================== -->
+
                                 <p id="nominal-info" class="hidden text-[11px] italic text-emerald-600 mt-1.5 font-medium" data-i18n="nomOtomatis">
                                     Nominal dihitung otomatis berdasarkan jumlah unit yang dipilih.
                                 </p>
                                 
-                                <div id="quick-nominal" class="mt-3 hidden">
+                                <div id="quick-nominal" class="mt-3">
                                     <div class="grid grid-cols-2 gap-2">
-                                        <!-- Baris 1: Pilihan Standar -->
-                                        <button type="button" onclick="setNominal(50000, this)" class="quick-btn btn-quick-nom">Rp 50.000</button>
-                                        <button type="button" onclick="setNominal(100000, this)" class="quick-btn btn-quick-nom">Rp 100.000</button>
-                                        <!-- Baris 2: Pilihan Menengah & Tinggi -->
-                                        <button type="button" onclick="setNominal(250000, this)" class="quick-btn btn-quick-nom">Rp 250.000</button>
-                                        <button type="button" onclick="setNominal(500000, this)" class="quick-btn btn-quick-nom">Rp 500.000</button>
+                                        <button type="button" onclick="setNominal(50000, this)" class="quick-btn btn-quick-nom">Rp 50rb</button>
+                                        <button type="button" onclick="setNominal(100000, this)" class="quick-btn btn-quick-nom">Rp 100rb</button>
+                                        <button type="button" onclick="setNominal(250000, this)" class="quick-btn btn-quick-nom">Rp 250rb</button>
+                                        <button type="button" onclick="setNominal(500000, this)" class="quick-btn btn-quick-nom">Rp 500rb</button>
                                     </div>
-                                    <!-- Tombol "Lainnya" dibuat lebar di bawah agar mencolok -->
                                     <button type="button" onclick="focusNominal(this)" class="w-full mt-2 quick-btn btn-quick-nom bg-slate-50 text-slate-600 border-slate-200" data-i18n="lainnya">
                                         Atau masukkan nominal lainnya
                                     </button>
@@ -1467,18 +1468,27 @@
             if (harga > 0) document.getElementById('donasi-nominal').value = formatRibuan(harga * unit);
         }
 
+        // Fungsi pilih nominal cepat
         function setNominal(nominal, btnElement) {
+            // Memunculkan wrapper (No 1)
+            document.getElementById('wrapper-input-nominal').classList.remove('hidden');
+            
             document.getElementById('donasi-nominal').value = formatRibuan(nominal);
+            
+            // Highlight tombol
             document.querySelectorAll('.btn-quick-nom').forEach(btn => btn.classList.remove('active-btn'));
             if(btnElement) btnElement.classList.add('active-btn');
         }
 
+        // Fungsi tombol "Atau masukkan nominal lainnya"
         function focusNominal(btnElement) {
-            const inp = document.getElementById('donasi-nominal');
-            inp.focus();
-            inp.value = '';
+            // Memunculkan wrapper (No 1)
+            document.getElementById('wrapper-input-nominal').classList.remove('hidden');
+            
+            document.getElementById('donasi-nominal').focus();
+            
+            // Reset highlight
             document.querySelectorAll('.btn-quick-nom').forEach(btn => btn.classList.remove('active-btn'));
-            if(btnElement) btnElement.classList.add('active-btn');
         }
 
         function setUnit(unit, btnElement) {
