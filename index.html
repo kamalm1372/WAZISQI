@@ -1482,12 +1482,15 @@
 
         // Fungsi tombol "Atau masukkan nominal lainnya"
         function focusNominal(btnElement) {
-            // Memunculkan wrapper (No 1)
+            // Memunculkan wrapper input
             document.getElementById('wrapper-input-nominal').classList.remove('hidden');
             
-            document.getElementById('donasi-nominal').focus();
+            // Reset nilai menjadi kosong agar donatur bisa langsung mengetik nominal baru
+            const inputNominal = document.getElementById('donasi-nominal');
+            inputNominal.value = ''; // Dikosongkan agar menjadi 0
+            inputNominal.focus();    // Arahkan kursor ke sana
             
-            // Reset highlight
+            // Reset highlight pada tombol nominal cepat
             document.querySelectorAll('.btn-quick-nom').forEach(btn => btn.classList.remove('active-btn'));
         }
 
