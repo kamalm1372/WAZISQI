@@ -300,23 +300,25 @@
                             
                             <!-- BAGIAN 1: INPUT UNIT -->
                             <div id="area-satuan" style="display:none;">
-                                <label class="block text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1.5" data-i18n="labelJmlUnit">
-                                    Jumlah Unit/Porsi
-                                </label>
-                                <input type="number" id="donasi-unit" oninput="kalkulasiTotal()" min="1" value="1" class="w-full bg-white border border-emerald-200 rounded-xl px-4 py-2.5 outline-none font-bold text-slate-800">
-                                <div id="info-harga-satuan" class="mt-2 text-[11px] font-bold text-emerald-600 border-l-2 border-emerald-500 pl-2"></div>
+                                <!-- Bagian Harga Selalu Terlihat -->
+                                <div class="mb-2">
+                                    <label class="block text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1.5" data-i18n="labelJmlUnit">Jumlah Unit/Porsi</label>
+                                    <div id="info-harga-satuan" class="text-[11px] font-bold text-emerald-600 border-l-2 border-emerald-500 pl-2"></div>
+                                </div>
+
+                                <!-- Bagian Input Hanya Muncul Jika Dipilih/Klik Lainnya -->
+                                <div id="wrapper-unit" class="hidden mt-3">
+                                    <input type="number" id="donasi-unit" oninput="kalkulasiTotal()" min="1" value="1" class="w-full bg-white border border-emerald-200 rounded-xl px-4 py-2.5 outline-none font-bold text-slate-800">
+                                </div>
                                 
-                                <div id="quick-unit" class="mt-3.5 hidden">
-                                    <p class="text-xs font-bold text-emerald-700 flex items-center gap-1 mb-2">
-                                        <i class="ph-fill ph-squares-four"></i>
-                                        <span data-i18n="jmlUnitPopuler">Jumlah Unit Populer</span>
-                                    </p>
+                                <!-- Tombol pilihan -->
+                                <div id="quick-unit" class="mt-3">
                                     <div class="grid grid-cols-5 gap-2">
                                         <button type="button" onclick="setUnit(1, this)" class="quick-btn btn-quick-unit active-btn">1</button>
                                         <button type="button" onclick="setUnit(5, this)" class="quick-btn btn-quick-unit">5</button>
                                         <button type="button" onclick="setUnit(10, this)" class="quick-btn btn-quick-unit">10</button>
                                         <button type="button" onclick="setUnit(20, this)" class="quick-btn btn-quick-unit">20</button>
-                                        <button type="button" onclick="focusUnit(this)" class="quick-btn btn-quick-unit bg-orange-50 text-orange-600 border-orange-200" data-i18n="lainnya">Lainnya</button>
+                                        <button type="button" onclick="toggleInputUnit()" class="quick-btn btn-quick-unit bg-orange-50 text-orange-600 border-orange-200" data-i18n="lainnya">Lainnya</button>
                                     </div>
                                 </div>
                             </div>
@@ -2420,6 +2422,30 @@
         function t(key) {
             return translations[currentLang][key] || key;
         }
+
+        // Fungsi untuk memilih porsi (Kotak input TIDAK terbuka)
+        function setUnit(unit, btnElement) {
+            // Sembunyikan kotak input jika sebelumnya terbuka
+            document.getElementById('wrapper-unit').classList.add('hidden');
+            
+            // Set nilai unit ke input tersembunyi/value
+            document.getElementById('donasi-unit').value = unit;
+            kalkulasiTotal();
+            
+            // Kelola warna tombol
+            document.querySelectorAll('.btn-quick-unit').forEach(btn => btn.classList.remove('active-btn'));
+            if(btnElement) btnElement.classList.add('active-btn');
+        }
+
+        // Fungsi khusus tombol "Lainnya" (Kotak input AKAN terbuka)
+        function toggleInputUnit() {
+            // Tampilkan kotak input
+            document.getElementById('wrapper-unit').classList.remove('hidden');
+            document.getElementById('donasi-unit').focus();
+            
+            // Hilangkan semua warna aktif dari tombol porsi
+            document.querySelectorAll('.btn-quick-unit').forEach(btn => btn.classList.remove('active-btn'));
+        }     
 
         function toggleLanguage() {
             currentLang = currentLang === 'id' ? 'en' : 'id';
