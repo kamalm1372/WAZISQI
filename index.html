@@ -295,40 +295,69 @@
                                 </div>
                         </div>
 
-                        <div id="area-satuan" style="display:none;" class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-
-                            <label class="block text-sm font-semibold text-emerald-800 mb-1" data-i18n="labelJmlUnit">
-                                Jumlah Unit/Porsi
-                            </label>
-
-                            <input type="number"
-                                  id="donasi-unit"
-                                  oninput="kalkulasiTotal()"
-                                  min="1"
-                                  value="1"
-                                  class="w-full bg-white border border-emerald-200 rounded-lg px-4 py-2 outline-none">
-
-                            <p class="text-[10px] text-emerald-600 mt-1 font-bold" id="info-harga-satuan"></p>
-
-                            <div id="quick-unit" class="mt-4 hidden">
-
-                                <p class="text-xs font-bold text-emerald-700 flex items-center gap-1 mb-2">
-                                    <i class="ph-fill ph-squares-four"></i>
-                                    <span data-i18n="jmlUnitPopuler">Jumlah Unit Populer</span>
-                                </p>
-
-                                <div class="grid grid-cols-5 gap-2">
-                                    <button type="button" onclick="setUnit(1, this)" class="quick-btn btn-quick-unit active-btn">1</button>
-                                    <button type="button" onclick="setUnit(5, this)" class="quick-btn btn-quick-unit">5</button>
-                                    <button type="button" onclick="setUnit(10, this)" class="quick-btn btn-quick-unit">10</button>
-                                    <button type="button" onclick="setUnit(20, this)" class="quick-btn btn-quick-unit">20</button>
-                                    <button type="button" onclick="focusUnit(this)" class="quick-btn btn-quick-unit bg-orange-50 text-orange-600 border-orange-200" data-i18n="lainnya">Lainnya</button>
+                        <!-- KOTAK PEMBAYARAN TERPADU WAZISQI -->
+                        <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 shadow-sm space-y-4">
+                            
+                            <!-- BAGIAN 1: INPUT UNIT -->
+                            <div id="area-satuan" style="display:none;">
+                                <label class="block text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1.5" data-i18n="labelJmlUnit">
+                                    Jumlah Unit/Porsi
+                                </label>
+                                <input type="number" id="donasi-unit" oninput="kalkulasiTotal()" min="1" value="1" class="w-full bg-white border border-emerald-200 rounded-xl px-4 py-2.5 outline-none font-bold text-slate-800">
+                                <div id="info-harga-satuan" class="mt-2 text-[11px] font-bold text-emerald-600 border-l-2 border-emerald-500 pl-2"></div>
+                                
+                                <div id="quick-unit" class="mt-3.5 hidden">
+                                    <p class="text-xs font-bold text-emerald-700 flex items-center gap-1 mb-2">
+                                        <i class="ph-fill ph-squares-four"></i>
+                                        <span data-i18n="jmlUnitPopuler">Jumlah Unit Populer</span>
+                                    </p>
+                                    <div class="grid grid-cols-5 gap-2">
+                                        <button type="button" onclick="setUnit(1, this)" class="quick-btn btn-quick-unit active-btn">1</button>
+                                        <button type="button" onclick="setUnit(5, this)" class="quick-btn btn-quick-unit">5</button>
+                                        <button type="button" onclick="setUnit(10, this)" class="quick-btn btn-quick-unit">10</button>
+                                        <button type="button" onclick="setUnit(20, this)" class="quick-btn btn-quick-unit">20</button>
+                                        <button type="button" onclick="focusUnit(this)" class="quick-btn btn-quick-unit bg-orange-50 text-orange-600 border-orange-200" data-i18n="lainnya">Lainnya</button>
+                                    </div>
                                 </div>
+                            </div>
 
+                            <!-- GARIS PEMBATAS PUTUS-PUTUS ELEGAN -->
+                            <hr id="garis-pembatas" class="border-dashed border-emerald-200/80 my-1" style="display:none;">
+
+                            <!-- BAGIAN 2: NOMINAL DONASI / TOTAL PEMBAYARAN -->
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1.5" data-i18n="labelNominal">
+                                    Nominal Donasi
+                                </label>                           
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-700 font-bold text-sm">Rp</span>
+                                    <input type="text" id="donasi-nominal" placeholder="0" class="w-full bg-white border border-emerald-200 rounded-xl pl-12 pr-10 py-3 focus:ring-2 focus:ring-primary outline-none font-bold text-emerald-600" required>
+                                    <i id="nominal-lock" class="ph-fill ph-lock absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500 hidden text-sm"></i>
+                                </div>
+                                <p id="nominal-info" class="hidden text-[11px] italic text-emerald-600 mt-1.5 font-medium" data-i18n="nomOtomatis">
+                                    Nominal dihitung otomatis berdasarkan jumlah unit yang dipilih.
+                                </p>
+                                
+                                <div id="quick-nominal" class="mt-3.5 hidden">
+                                    <p class="text-xs font-bold text-emerald-700 flex items-center gap-1 mb-2">
+                                        <i class="ph-fill ph-lightning"></i>
+                                        <span data-i18n="nomRekomendasi">Nominal Rekomendasi</span>
+                                    </p>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <button type="button" onclick="setNominal(50000, this)" class="quick-btn btn-quick-nom">50rb</button>
+                                        <button type="button" onclick="setNominal(100000, this)" class="quick-btn btn-quick-nom">100rb</button>
+                                        <button type="button" onclick="setNominal(250000, this)" class="quick-btn btn-quick-nom">250rb</button>
+                                        <button type="button" onclick="setNominal(500000, this)" class="quick-btn btn-quick-nom">500rb</button>
+                                        <button type="button" onclick="setNominal(1000000, this)" class="quick-btn btn-quick-nom">1 Juta</button>
+                                        <button type="button" onclick="focusNominal(this)" class="quick-btn btn-quick-nom bg-orange-50 text-orange-600 border-orange-200" data-i18n="lainnya">Lainnya</button>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
-                        <div id="kalkulator-zakat" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-4 shadow-sm relative overflow-hidden">
+                        
+                        <!-- KALKULATOR ZAKAT (Muncul di luar kotak jika kategori Zakat dipilih) -->
+                        <div id="kalkulator-zakat" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 shadow-sm relative overflow-hidden mt-4 mb-4">
                             <div class="absolute -right-4 -top-4 opacity-10">
                                 <i class="ph-fill ph-calculator text-7xl text-emerald-800"></i>
                             </div>
@@ -351,43 +380,6 @@
                                     <button type="button" onclick="gunakanNominalZakat()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-95 shadow-sm" data-i18n="btnGunakanNominal">
                                         Gunakan Nominal Ini
                                     </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-
-                            <label class="block text-sm font-semibold text-slate-700 mb-1" data-i18n="labelNominal">
-                                Nominal Donasi
-                            </label>                           
-
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">Rp</span>
-                                <input type="text"
-                                      id="donasi-nominal"
-                                      placeholder="0"
-                                      class="w-full bg-white border border-slate-200 rounded-xl pl-12 pr-10 py-3 focus:ring-2 focus:ring-primary outline-none font-bold text-emerald-600"
-                                      required>
-
-                                <i id="nominal-lock" class="ph-fill ph-lock absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hidden"></i>
-                            </div>
-
-                            <p id="nominal-info" class="hidden text-xs italic text-slate-500 mt-1" data-i18n="nomOtomatis">
-                                Nominal dihitung otomatis berdasarkan jumlah unit yang dipilih.
-                            </p>
-
-                            <div id="quick-nominal" class="mt-4 hidden">
-                                <p class="text-xs font-bold text-emerald-700 flex items-center gap-1 mb-2">
-                                    <i class="ph-fill ph-lightning"></i>
-                                    <span data-i18n="nomRekomendasi">Nominal Rekomendasi</span>
-                                </p>
-
-                                <div class="grid grid-cols-3 gap-2">
-                                    <button type="button" onclick="setNominal(50000, this)" class="quick-btn btn-quick-nom">50rb</button>
-                                    <button type="button" onclick="setNominal(100000, this)" class="quick-btn btn-quick-nom">100rb</button>
-                                    <button type="button" onclick="setNominal(250000, this)" class="quick-btn btn-quick-nom">250rb</button>
-                                    <button type="button" onclick="setNominal(500000, this)" class="quick-btn btn-quick-nom">500rb</button>
-                                    <button type="button" onclick="setNominal(1000000, this)" class="quick-btn btn-quick-nom">1 Juta</button>
-                                    <button type="button" onclick="focusNominal(this)" class="quick-btn btn-quick-nom bg-orange-50 text-orange-600 border-orange-200" data-i18n="lainnya">Lainnya</button>
                                 </div>
                             </div>
                         </div>
@@ -1434,30 +1426,27 @@
                 quickNominal.classList.add('hidden');
                 quickUnit.classList.remove('hidden');
                 area.style.display = 'block';
-                document.getElementById('info-harga-satuan').innerText = `${t('hargaUnit')}: ${fRupiah(harga)}`;
+                document.getElementById('garis-pembatas').style.display = 'block'; // TAMBAHKAN BARIS INI
+                document.getElementById('info-harga-satuan').innerHTML = `${t('hargaUnit')} : <span class="text-slate-800">${fRupiah(harga)}</span>`;
                 document.getElementById('donasi-unit').value = 1;
                 inpNominal.value = formatRibuan(harga);
                 inpNominal.readOnly = true;
                 inpNominal.setAttribute('tabindex', '-1');
-
                 inpNominal.classList.add('bg-slate-100', 'text-slate-600', 'cursor-not-allowed', 'nominal-locked');
                 document.getElementById('nominal-lock').classList.remove('hidden');
                 document.getElementById('nominal-info').classList.remove('hidden');
-                document.getElementById('nominal-info').innerText = t('nomOtomatis');
                 inpNominal.classList.remove('focus:ring-2', 'focus:ring-primary');                
-
             } else {
                 quickNominal.classList.remove('hidden');
                 quickUnit.classList.add('hidden');
                 area.style.display = 'none';
+                document.getElementById('garis-pembatas').style.display = 'none'; // TAMBAHKAN BARIS INI
                 inpNominal.value = '';
                 inpNominal.readOnly = false;
                 inpNominal.removeAttribute('tabindex');
-
                 inpNominal.classList.remove('bg-slate-100', 'text-slate-600', 'cursor-not-allowed', 'nominal-locked');
                 document.getElementById('nominal-lock').classList.add('hidden');
                 document.getElementById('nominal-info').classList.add('hidden');                
-
                 inpNominal.classList.add('focus:ring-2', 'focus:ring-primary');
             }
         }
@@ -2319,7 +2308,7 @@
                 navDonasi: "Donasi",
                 navLaporan: "Laporan",
                 navProfil: "Profil",
-                hargaUnit: "Harga/Unit",
+                hargaUnit: "Harga per Porsi",
                 donasiAnonim: "Donasi atas nama Hamba Allah",
                 waPesan1: `✨ *Fastabiqul Khairat!* Mari berlomba-lomba dalam kebaikan! ✨\n\nAlhamdulillah, hari ini saya baru saja menyalurkan donasi untuk program *`,
                 waPesan2: `* melalui WAZISQI Pondok Pesantren Al-Ittifaqiah Indralaya.\n\nHarta yang kita berikan di jalan Allah adalah amal jariyah yang pahalanya akan terus mengalir meski kita sudah tiada. 🕌📚\n\nYuk, ambil bagian dalam kebaikan ini! Salurkan amal jariyah terbaikmu dengan mudah, transparan, dan cepat melalui tautan resmi berikut:\n👉 https://wazisqi.org/\n\nSedikit dari kita, sangat berarti untuk masa depan santri dan generasi umat. Jazaakumullah Khairan Katsiran! 🙏`
@@ -2421,7 +2410,7 @@
                 navDonasi: "Donate",
                 navLaporan: "Reports",
                 navProfil: "Profile",
-                hargaUnit: "Price/Unit",
+                hargaUnit: "Price per Portion",
                 donasiAnonim: "Donate anonymously (Anonymous)",
                 waPesan1: `✨ *Fastabiqul Khairat!* Let's compete in goodness! ✨\n\nAlhamdulillah, today I just channeled a donation for the *`,
                 waPesan2: `* program through WAZISQI Al-Ittifaqiah Indralaya Islamic Boarding School.\n\nWealth given in the way of Allah is an ongoing charity whose rewards will continue to flow even after we are gone. 🕌📚\n\nLet's take part in this goodness! Channel your best ongoing charity easily, transparently, and quickly through the following official link:\n👉 https://wazisqi.org/\n\nA little from us means a lot for the future of the students and the generation of the ummah. May Allah reward you with goodness! 🙏`
