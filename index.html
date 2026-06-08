@@ -1795,32 +1795,68 @@
                 const data = await runGAS('getInitialData');
                 appPrograms = data.programs || [];
                 
+                // --- AWAL BAGIAN YANG BERUBAH ---
                 const donasiVerified = (data.donasi || []).filter(d => d.status === "Verified");
-                const kategoriList = [...new Set(appPrograms.map(p => p.kategori))];
-                const rekap = {};
-                kategoriList.forEach(k => rekap[k] = 0);
+                
+                // 1. Ubah rekap menjadi per Program (bukan kategori)
+                const rekapProgram = {};
+                appPrograms.forEach(p => rekapProgram[p.nama] = 0);
                 
                 let grandTotal = 0;
                 donasiVerified.forEach(d => {
-                    const prog = appPrograms.find(p => p.nama === d.program);
-                    const cat = prog ? prog.kategori : 'Infaq';
-                    if (rekap.hasOwnProperty(cat)) { rekap[cat] += Number(d.jumlah) || 0; } 
-                    else { rekap[cat] = Number(d.jumlah) || 0; }
+                    const progNama = d.program;
+                    if (rekapProgram.hasOwnProperty(progNama)) { rekapProgram[progNama] += Number(d.jumlah) || 0; } 
+                    else { rekapProgram[progNama] = Number(d.jumlah) || 0; }
                     grandTotal += Number(d.jumlah) || 0;
                 });
 
+                // Hitung porsi dana keseluruhan
+                const danaBersih = grandTotal * 0.95;
+                const danaOperasional = grandTotal * 0.05;
+
+                // Tampilkan ke layar (Total Keseluruhan)
                 document.getElementById('admin-rekap-total').innerHTML = `
                     <p class="text-[10px] text-emerald-100 font-bold uppercase tracking-wider mb-1">Total Saldo Terverifikasi</p>
-                    <p class="text-2xl font-black tracking-tight">${fRupiah(grandTotal)}</p>
+                    <p class="text-3xl font-black tracking-tight mb-4 drop-shadow-sm">${fRupiah(grandTotal)}</p>
+                    
+                    <div class="grid grid-cols-2 gap-3 pt-3 border-t border-emerald-400/50">
+                        <div>
+                            <p class="text-[9px] text-emerald-100 font-bold uppercase tracking-wider mb-0.5">Bisa Ditarik (95%)</p>
+                            <p class="text-sm font-bold text-white">${fRupiah(danaBersih)}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] text-emerald-100 font-bold uppercase tracking-wider mb-0.5">Operasional (5%)</p>
+                            <p class="text-sm font-bold text-white">${fRupiah(danaOperasional)}</p>
+                        </div>
+                    </div>
                 `;
 
-                document.getElementById('admin-list-rekap').innerHTML = Object.keys(rekap).map(k => `
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">${k}</p>
-                        <p class="text-sm font-black text-slate-800 mt-1">${fRupiah(rekap[k])}</p>
-                    </div>
-                `).join('');
+                // 2. Ubah grid menjadi 1 kolom agar rincian per program muat
+                document.getElementById('admin-list-rekap').className = "grid grid-cols-1 gap-3";
 
+                // 3. Tampilkan rincian per Program
+                document.getElementById('admin-list-rekap').innerHTML = Object.keys(rekapProgram).map(progNama => {
+                    const totalProg = rekapProgram[progNama];
+                    const bersihProg = totalProg * 0.95;
+                    const opProg = totalProg * 0.05;
+
+                    return `
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
+                        <p class="text-xs font-bold text-slate-800 truncate">${progNama}</p>
+                        <p class="text-lg font-black text-primary mt-0.5">${fRupiah(totalProg)}</p>
+                        <div class="flex justify-between items-center mt-3 pt-3 border-t border-dashed border-slate-200">
+                            <div>
+                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Bersih (95%)</p>
+                                <p class="text-xs font-bold text-slate-700">${fRupiah(bersihProg)}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Operasional (5%)</p>
+                                <p class="text-xs font-bold text-slate-700">${fRupiah(opProg)}</p>
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+                // --- AKHIR BAGIAN YANG BERUBAH ---
                 const pending = (data.donasi || []).filter(d => d.status === "Menunggu Verifikasi").reverse();
                 const listV = document.getElementById('admin-list-verifikasi');
                 
