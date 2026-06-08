@@ -1173,7 +1173,6 @@
 
         function renderPrograms(filter = 'Semua') {
             const container = document.getElementById('program-list-container');
-            
             const activePrograms = appPrograms.filter(p => p.status === "Aktif");
             const filtered = filter === 'Semua' ? activePrograms : activePrograms.filter(p => p.kategori === filter);
             
@@ -1186,54 +1185,47 @@
                 const pct = p.target > 0 ? Math.min(Math.round((p.terkumpul / p.target) * 100), 100) : 0;
                 return `
                 <div onclick="goToDonasi('${p.id}')" class="bg-white rounded-2xl p-4 flex flex-col gap-3 shadow-sm border border-slate-100 hover:shadow-md hover:border-emerald-300 transition-all duration-300 cursor-pointer group">
-                    <div class="flex gap-4 items-center">
-                        <img src="${p.imageUrl}" class="w-24 h-24 object-cover rounded-xl bg-slate-50">
+                    
+                    <div class="flex gap-4 items-start">
+                        <img src="${p.imageUrl}" class="w-24 h-24 object-cover rounded-xl bg-slate-50 shrink-0">
                         <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-center">
                                 <span class="text-[9px] font-black text-primary uppercase bg-emerald-50 px-2 py-0.5 rounded">${p.kategori}</span>
-                                <span class="text-[9px] text-slate-400 font-medium">${t('target')}: <b class="text-slate-600">${fRupiah(p.target)}</b></span>
+                                ${p.deadline ? `<span class="text-[9px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100 flex items-center gap-0.5"><i class="ph-fill ph-timer"></i> ${hitungWaktuSisa(p.deadline)}</span>` : ''}
                             </div>
+                            
                             <h4 class="font-bold text-slate-800 text-sm mt-1 leading-tight flex items-center gap-1">
-                                ${p.nama}
-                                <i class="ph-fill ph-seal-check text-blue-500 text-[15px] shrink-0"></i>
+                                ${p.nama} <i class="ph-fill ph-seal-check text-blue-500 text-[15px] shrink-0"></i>
                             </h4>
-                            ${p.deadline ? `
-                            <div class="mt-1">
-                                <span class="text-[9px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
-                                    <i class="ph-fill ph-timer"></i> ${hitungWaktuSisa(p.deadline)}
-                                </span>
-                            </div>
-                            ` : ''}                            
-                            ${p.deskripsi ? `<p class="text-[10px] text-slate-500 mt-1 leading-snug">${p.deskripsi}</p>` : ''}
-                            ${p.unitPrice > 0 ? `
-                            <div class="mt-2.5">
-                                <span class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-200 text-[10px] font-bold text-amber-700 rounded-md shadow-sm">
-                                    <i class="ph-fill ph-tag"></i> Mulai ${fRupiah(p.unitPrice)} / porsi
-                                </span>
-                            </div>` : ''}
-                            <div class="mt-2">
-                                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                                    <div class="bg-primary h-full" style="width: ${pct}%"></div>
-                                </div>
-                                <div class="flex justify-between mt-1 items-center">
-                                    <div class="text-[10px] text-slate-500 flex items-center gap-1.5">
-                                        <span class="flex items-center gap-0.5">
-                                            <i class="ph-fill ph-users text-emerald-500 text-[11px]"></i>
-                                            ${t('donatur')}: <b class="text-slate-700">${p.jumlahDonatur || 0}</b>
-                                        </span>
-                                        <span class="text-slate-300">•</span> 
-                                        <span>
-                                            ${t('terkumpul')}: <b class="text-emerald-600">${fRupiah(p.terkumpul)}</b>
-                                        </span>
-                                    </div>
-                                    <span class="text-[10px] font-bold text-primary">${pct}%</span>
-                                </div>
-                            </div>
+                            
+                            ${p.deskripsi ? `
+                                <p id="desc-${p.id}" class="text-[10px] text-slate-500 mt-2 leading-snug line-clamp-2 transition-all duration-300">${p.deskripsi}</p>
+                                <button id="btn-desc-${p.id}" onclick="toggleDesc(event, '${p.id}')" class="text-[9px] font-bold text-primary mt-1 hover:underline">Baca selengkapnya</button>
+                            ` : ''}
                         </div>
                     </div>
-                    <button onclick="goToDonasi('${p.id}')" class="w-full bg-gradient-to-br from-primary to-primaryDark text-white shadow-md shadow-primary/30 hover:shadow-lg hover:shadow-primary/40 transition-all active:scale-95 font-bold py-3 rounded-xl text-xs">
-                        ${t('donasiSekarang')}
-                    </button>
+
+                    <div class="w-full pt-3 border-t border-slate-100">
+                        <div class="flex justify-between items-center mb-3">
+                            ${p.unitPrice > 0 ? `<span class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-200 text-[10px] font-bold text-amber-700 rounded-md shadow-sm"><i class="ph-fill ph-tag"></i> Mulai ${fRupiah(p.unitPrice)} / porsi</span>` : '<div></div>'}
+                            <span class="text-[10px] text-slate-400 font-bold">${t('target')}: <b class="text-slate-600">${fRupiah(p.target)}</b></span>
+                        </div>
+
+                        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden mb-2">
+                            <div class="bg-primary h-full" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="text-[10px] text-slate-500 flex items-center gap-1.5">
+                                <span class="flex items-center gap-0.5"><i class="ph-fill ph-users text-emerald-500 text-[11px]"></i> ${t('donatur')}: <b>${p.jumlahDonatur || 0}</b></span>
+                                <span class="text-slate-300">•</span> 
+                                <span>${t('terkumpul')}: <b class="text-emerald-600">${fRupiah(p.terkumpul)}</b></span>
+                            </div>
+                            <span class="text-[10px] font-bold text-primary">${pct}%</span>
+                        </div>
+                        <button class="w-full bg-gradient-to-br from-primary to-primaryDark text-white shadow-md shadow-primary/30 hover:shadow-lg hover:shadow-primary/40 transition-all active:scale-95 font-bold py-3 rounded-xl text-xs">
+                            ${t('donasiSekarang')}
+                        </button>
+                    </div>
                 </div>`;
             }).join('');
         }
