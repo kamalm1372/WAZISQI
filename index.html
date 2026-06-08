@@ -1197,6 +1197,13 @@
                                 ${p.nama}
                                 <i class="ph-fill ph-seal-check text-blue-500 text-[15px] shrink-0"></i>
                             </h4>
+                            ${p.deadline ? `
+                            <div class="mt-1">
+                                <span class="text-[9px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
+                                    <i class="ph-fill ph-timer"></i> ${hitungWaktuSisa(p.deadline)}
+                                </span>
+                            </div>
+                            ` : ''}                            
                             ${p.deskripsi ? `<p class="text-[10px] text-slate-500 mt-1 leading-snug">${p.deskripsi}</p>` : ''}
                             ${p.unitPrice > 0 ? `
                             <div class="mt-2.5">
@@ -2607,7 +2614,19 @@
         document.addEventListener('DOMContentLoaded', bacaUrlSaatIni);
         
         // Jalankan jika user menekan tombol "Back/Kembali" di HP mereka
-        window.addEventListener('popstate', bacaUrlSaatIni);              
+        window.addEventListener('popstate', bacaUrlSaatIni);  
+
+        function hitungWaktuSisa(deadline) {
+            if (!deadline) return ""; // Jika kosong, tidak tampilkan apa-apa
+            const target = new Date(deadline);
+            const sekarang = new Date();
+            const selisih = target - sekarang;
+            
+            if (selisih <= 0) return "Program Berakhir";
+            
+            const hari = Math.floor(selisih / (1000 * 60 * 60 * 24));
+            return hari + " hari tersisa";
+        }                    
     </script>
 </body>
 </html>
