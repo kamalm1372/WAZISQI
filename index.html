@@ -1039,7 +1039,10 @@
             if (path && !menuUtama.includes(path)) {
                 
                 // Cari program yang "slug"-nya cocok dengan path URL
-                const targetProg = appPrograms.find(p => buatSlug(p.nama) === path);
+                const targetProg = appPrograms.find(p => {
+                    const validSlug = (p.slug && p.slug.trim() !== "") ? p.slug.trim() : buatSlug(p.nama);
+                    return validSlug === path;
+                });
 
                 if (targetProg) {
                     // Pindah ke tab donasi
@@ -1315,7 +1318,7 @@
             if (!p) return;
 
             // Buat URL dari nama program
-            const slug = buatSlug(p.nama);
+            const slug = (p.slug && p.slug.trim() !== "") ? p.slug.trim() : buatSlug(p.nama);
             
             // Ubah tampilan ke tab donasi
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
