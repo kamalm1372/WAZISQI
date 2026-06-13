@@ -225,7 +225,13 @@
                     </div>
                 </div>
                 <div class="pt-4 border-t border-slate-200">
-                    <h3 class="font-bold text-lg text-slate-800 mb-3" data-i18n="donTerbaru">Donatur Terbaru</h3>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-lg text-slate-800" data-i18n="donTerbaru">Donatur</h3>
+                        <div class="flex gap-1 bg-slate-100 p-1 rounded-lg">
+                            <button onclick="sortDonatur('terbaru')" id="btn-sort-terbaru" class="px-3 py-1 text-[10px] font-bold rounded-md bg-white text-primary shadow-sm transition-all">Terbaru</button>
+                            <button onclick="sortDonatur('terbesar')" id="btn-sort-terbesar" class="px-3 py-1 text-[10px] font-bold rounded-md text-slate-500 hover:text-slate-700 transition-all">Terbesar</button>
+                        </div>
+                    </div>
                     <div id="recent-donors-list" class="space-y-3">
                         <div class="text-sm text-slate-400 text-center py-4" data-i18n="memuatData">Memuat data...</div>
                     </div>
@@ -1097,56 +1103,7 @@
             }
             renderPrograms(activeCat);
 
-            const recentContainer = document.getElementById('recent-donors-list');
-            const recentDonors = (data.donasi || []).filter(d => d.status === "Verified" || d.status === "Menunggu Verifikasi" || d.status === "Ditolak").slice(-10).reverse();
-            
-            if(recentDonors.length === 0) {
-                recentContainer.innerHTML = `<p class="text-center text-[10px] text-slate-400 py-4 italic">${t('belumAdaDonasi')}</p>`;
-            } else {
-                recentContainer.innerHTML = recentDonors.map(d => {
-                    const safeName = d.nama || (currentLang === 'id' ? 'Hamba Allah' : 'Anonymous');
-                    const isAnonim = safeName.toLowerCase().includes('hamba allah') || safeName.toLowerCase().includes('anonymous');
-                    const initial = String(safeName).charAt(0).toUpperCase();
-                    const waktuDonasi = timeAgo(d.timestamp || d.tanggal); 
-                    
-                    let avatarContent = '';
-                    let avatarClass = '';
-
-                    if (isAnonim) {
-                        avatarClass = 'bg-slate-100 text-slate-400 border border-slate-200';
-                        avatarContent = '<i class="ph-fill ph-user text-lg"></i>'; 
-                    } else {
-                        avatarClass = 'bg-gradient-to-br from-primary to-primaryDark text-white shadow-md shadow-primary/30 font-bold text-sm ring-2 ring-primary/10';
-                        avatarContent = initial;
-                    }
-                    
-                    const statusText = d.status === 'Verified' ? t('terverifikasi') : d.status === 'Ditolak' ? t('ditolak') : t('menungguVerif');
-
-                    return `
-                        <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${avatarClass}">
-                                ${avatarContent}
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-bold text-sm text-slate-800 truncate">${safeName}</p>
-                                <p class="text-[10px] text-slate-500 truncate">${d.program}</p>
-                                <p class="text-[10px] font-bold mt-0.5 ${
-                                    d.status === 'Verified' ? 'text-primary' : d.status === 'Ditolak' ? 'text-red-500' : 'text-orange-500'
-                                }">
-                                    ${statusText}
-                                </p>                                                 
-                            </div>
-                            
-                            <div class="flex flex-col items-end shrink-0">
-                                <div class="font-bold text-primary text-sm">${fRupiah(d.jumlah)}</div>
-                                <div class="text-[9px] text-slate-400 mt-1 font-medium flex items-center gap-1">
-                                    <i class="ph-fill ph-clock"></i> ${waktuDonasi}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
+            renderDonaturList('terbaru');
             
             const doaContainer = document.getElementById('doa-list-container');
             const donasiDenganDoa = (data.donasi || []).filter(d => d.doa && d.doa.trim() !== "").slice(-10).reverse();
@@ -2621,7 +2578,77 @@
             
             const hari = Math.floor(selisih / (1000 * 60 * 60 * 24));
             return hari + " hari tersisa";
-        }                    
+        } 
+
+        function sortDonatur(sortBy) {
+            // Ubah gaya tombol yang aktif
+            const btnBaru = document.getElementById('btn-sort-terbaru');
+            const btnBesar = document.getElementById('btn-sort-terbesar');
+
+            if(sortBy === 'terbaru') {
+                btnBaru.className = "px-3 py-1 text-[10px] font-bold rounded-md bg-white text-primary shadow-sm transition-all";
+                btnBesar.className = "px-3 py-1 text-[10px] font-bold rounded-md text-slate-500 hover:text-slate-700 transition-all";
+            } else {
+                btnBesar.className = "px-3 py-1 text-[10px] font-bold rounded-md bg-white text-primary shadow-sm transition-all";
+                btnBaru.className = "px-3 py-1 text-[10px] font-bold rounded-md text-slate-500 hover:text-slate-700 transition-all";
+            }
+
+            // Panggil perenderan ulang
+            renderDonaturList(sortBy);
+        }
+
+        function renderDonaturList(sortBy = 'terbaru') {
+            const data = window.appData;
+            if(!data) return;
+
+            const recentContainer = document.getElementById('recent-donors-list');
+            let donors = (data.donasi || []).filter(d => d.status === "Verified" || d.status === "Menunggu Verifikasi" || d.status === "Ditolak");
+
+            // LOGIKA FILTER
+            if (sortBy === 'terbaru') {
+                donors = donors.slice(-10).reverse(); // 10 data terakhir masuk
+            } else if (sortBy === 'terbesar') {
+                // Urutkan nominal dari besar ke kecil, lalu ambil 10 teratas
+                donors = [...donors].sort((a, b) => Number(b.jumlah) - Number(a.jumlah)).slice(0, 10);
+            }
+
+            if(donors.length === 0) {
+                recentContainer.innerHTML = `<p class="text-center text-[10px] text-slate-400 py-4 italic">${t('belumAdaDonasi')}</p>`;
+                return;
+            }
+
+            recentContainer.innerHTML = donors.map(d => {
+                const safeName = d.nama || (currentLang === 'id' ? 'Hamba Allah' : 'Anonymous');
+                const isAnonim = safeName.toLowerCase().includes('hamba allah') || safeName.toLowerCase().includes('anonymous');
+                const initial = String(safeName).charAt(0).toUpperCase();
+                const waktuDonasi = timeAgo(d.timestamp || d.tanggal); 
+                let avatarContent = '';
+                let avatarClass = '';
+
+                if (isAnonim) {
+                    avatarClass = 'bg-slate-100 text-slate-400 border border-slate-200';
+                    avatarContent = '<i class="ph-fill ph-user text-lg"></i>'; 
+                } else {
+                    avatarClass = 'bg-gradient-to-br from-primary to-primaryDark text-white shadow-md shadow-primary/30 font-bold text-sm ring-2 ring-primary/10';
+                    avatarContent = initial;
+                }
+                const statusText = d.status === 'Verified' ? t('terverifikasi') : d.status === 'Ditolak' ? t('ditolak') : t('menungguVerif');
+
+                return `
+                    <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3 hover:border-emerald-200 transition-colors">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${avatarClass}">${avatarContent}</div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-sm text-slate-800 truncate">${safeName}</p>
+                            <p class="text-[10px] text-slate-500 truncate">${d.program}</p>
+                            <p class="text-[10px] font-bold mt-0.5 ${d.status === 'Verified' ? 'text-primary' : d.status === 'Ditolak' ? 'text-red-500' : 'text-orange-500'}">${statusText}</p>
+                        </div>
+                        <div class="flex flex-col items-end shrink-0">
+                            <div class="font-bold text-primary text-sm">${fRupiah(d.jumlah)}</div>
+                            <div class="text-[9px] text-slate-400 mt-1 font-medium flex items-center gap-1"><i class="ph-fill ph-clock"></i> ${waktuDonasi}</div>
+                        </div>
+                    </div>`;
+            }).join('');
+        }                           
     </script>
 </body>
 </html>
