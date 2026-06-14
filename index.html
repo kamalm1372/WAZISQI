@@ -1531,9 +1531,9 @@
             document.getElementById('info-kode-unik').innerText = "+" + kodeUnik;
             document.getElementById('info-total-transfer').innerText = fRupiah(totalTransfer);            
 
-            // --- KODE BARU: HITUNG MUNDUR BERGERAK (12 JAM) ---
+            // --- KODE BARU: HITUNG MUNDUR BERGERAK (4 JAM) ---
             const batasWaktu = new Date();
-            batasWaktu.setHours(batasWaktu.getHours() + 12); // Batas 12 Jam
+            batasWaktu.setHours(batasWaktu.getHours() + 4); // Batas 4 Jam
             
             const opsiTanggal = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             const teksTanggal = batasWaktu.toLocaleDateString('id-ID', opsiTanggal);
