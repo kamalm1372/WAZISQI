@@ -470,6 +470,17 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- KOTAK BATAS WAKTU PEMBAYARAN -->
+                            <div class="mt-3 bg-red-50 border border-red-100 rounded-xl p-3 flex items-center justify-between shadow-sm">
+                                <div class="text-left min-w-0">
+                                    <p class="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-0.5">Batas Waktu Pembayaran</p>
+                                    <p id="info-batas-waktu" class="text-[11px] font-black text-red-700 truncate">-</p>
+                                    <p id="info-hitung-mundur" class="text-[11px] font-bold text-red-600 mt-1 flex items-center gap-1"></p>
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-500 shrink-0 shadow-inner">
+                                    <i class="ph-fill ph-timer text-lg animate-pulse"></i>
+                                </div>
+                            </div>
 
                             <div class="mt-3 bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-left">
                                 <p class="text-[11px] text-emerald-700 leading-relaxed" data-i18n="mohonTransfer">
@@ -489,7 +500,7 @@
 
                     <div class="text-center pt-2">
                         <button onclick="resetDonasi()" class="text-sm text-slate-400 font-medium underline hover:text-slate-600 transition" data-i18n="kembali">
-                            Kembali
+                            Lihat Program Lainnya
                         </button>
                     </div>
                 </div>
@@ -884,6 +895,7 @@
         let appPrograms = [];
         let currentTrxId = null;
         let tempDonasiData = null;
+        let countdownInterval = null; // Tambahkan ini
 
         const fRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
 
@@ -1518,6 +1530,47 @@
             document.getElementById('info-nominal-donasi').innerText = fRupiah(nominalAsli);
             document.getElementById('info-kode-unik').innerText = "+" + kodeUnik;
             document.getElementById('info-total-transfer').innerText = fRupiah(totalTransfer);            
+
+            // --- KODE BARU: HITUNG MUNDUR BERGERAK (12 JAM) ---
+            const batasWaktu = new Date();
+            batasWaktu.setHours(batasWaktu.getHours() + 12); // Batas 12 Jam
+            
+            const opsiTanggal = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const teksTanggal = batasWaktu.toLocaleDateString('id-ID', opsiTanggal);
+            const teksJam = batasWaktu.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            
+            // Tampilkan tanggal statis
+            document.getElementById('info-batas-waktu').innerText = `${teksTanggal}, ${teksJam} WIB`;
+
+            // Hapus timer lama jika donatur sebelumnya sudah pernah mengisi form
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            // Jalankan timer bergerak setiap 1 detik (1000 ms)
+            countdownInterval = setInterval(() => {
+                const sekarang = new Date().getTime();
+                const selisih = batasWaktu.getTime() - sekarang;
+
+                // Jika waktu sudah habis
+                if (selisih <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('info-hitung-mundur').innerHTML = `<i class="ph-bold ph-warning-circle"></i> Waktu Habis`;
+                    return;
+                }
+
+                // Kalkulasi Jam, Menit, Detik
+                const jam = Math.floor((selisih % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const menit = Math.floor((selisih % (1000 * 60 * 60)) / (1000 * 60));
+                const detik = Math.floor((selisih % (1000 * 60)) / 1000);
+
+                // Format agar selalu 2 digit (contoh: 09:05:02)
+                const formatJam = jam.toString().padStart(2, '0');
+                const formatMenit = menit.toString().padStart(2, '0');
+                const formatDetik = detik.toString().padStart(2, '0');
+
+                // Tampilkan ke layar
+                document.getElementById('info-hitung-mundur').innerHTML = `<i class="ph-bold ph-hourglass-high"></i> Sisa: ${formatJam}j ${formatMenit}m ${formatDetik}d`;
+            }, 1000);
+            // --- AKHIR KODE BARU ---
         }
 
         function toggleImageType() {
