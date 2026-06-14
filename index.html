@@ -215,15 +215,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="mb-6">
-                    <div class="mb-4 flex items-center gap-2">
-                        <i class="ph-fill ph-hands-praying text-emerald-500 text-xl"></i>
-                        <h3 class="font-bold text-lg text-slate-800" data-i18n="titipanDoa">Titipan Doa</h3>
-                    </div>
-                    <div id="doa-list-container" class="flex overflow-x-auto thin-scroll gap-4 pb-2 snap-x">
-                        <div class="text-[11px] text-slate-400 italic" data-i18n="memuatDoa">Memuat doa-doa baik...</div>
-                    </div>
-                </div>
                 <div class="pt-4 border-t border-slate-200">
                     <div class="flex justify-between items-center mb-3">
                         <h3 class="font-bold text-lg text-slate-800" data-i18n="donTerbaru">Donatur</h3>
@@ -1130,32 +1121,7 @@
             }
             renderPrograms(activeCat);
 
-            renderDonaturList('terbaru');
-            
-            const doaContainer = document.getElementById('doa-list-container');
-            const donasiDenganDoa = (data.donasi || []).filter(d => d.doa && d.doa.trim() !== "").slice(-10).reverse();
-            
-            if(donasiDenganDoa.length === 0) {
-                doaContainer.innerHTML = `<p class="text-xs text-slate-400 italic px-2">${t('belumAdaDoa')}</p>`;
-            } else {
-                doaContainer.innerHTML = donasiDenganDoa.map(d => {
-                    const safeName = d.nama || (currentLang === 'id' ? 'Hamba Allah' : 'Anonymous');
-                    return `
-                    <div class="min-w-[240px] max-w-[240px] bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm snap-center shrink-0 flex flex-col justify-between">
-                        <p class="text-[11px] font-medium text-slate-600 italic leading-relaxed line-clamp-3">"${d.doa}"</p>
-                        <div class="mt-4 flex items-center gap-2 pt-3 border-t border-slate-50">
-                            <div class="w-7 h-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
-                                <i class="ph-fill ph-user text-[12px]"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-[10px] font-bold text-slate-800 truncate">${safeName}</p>
-                                <p class="text-[9px] text-slate-400 truncate">${t('untuk')}: ${d.program}</p>
-                            </div>
-                        </div>
-                    </div>
-                    `;
-                }).join('');
-            }            
+            renderDonaturList('terbaru');          
         }
 
         function renderPrograms(filter = 'Semua') {
@@ -2712,21 +2678,34 @@
                 }
                 const statusText = d.status === 'Verified' ? t('terverifikasi') : d.status === 'Ditolak' ? t('ditolak') : t('menungguVerif');
 
+                // KOTAK DOA (Hanya muncul jika donatur mengisi doa)
+                const elemenDoa = (d.doa && d.doa.trim() !== "") 
+                    ? `<div class="mt-2.5 bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100 flex items-start gap-2">
+                           <i class="ph-fill ph-quotes text-emerald-300 text-lg shrink-0"></i>
+                           <p class="text-[10px] font-medium text-emerald-800 italic leading-relaxed">"${d.doa}"</p>
+                       </div>` 
+                    : '';
+
                 return `
-                    <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3 hover:border-emerald-200 transition-colors">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${avatarClass}">${avatarContent}</div>
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-100 flex items-start gap-3 hover:border-emerald-200 transition-colors shadow-sm">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${avatarClass}">${avatarContent}</div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-bold text-sm text-slate-800 truncate">${safeName}</p>
-                            <p class="text-[10px] text-slate-500 truncate">${d.program}</p>
-                            <p class="text-[10px] font-bold mt-0.5 ${d.status === 'Verified' ? 'text-primary' : d.status === 'Ditolak' ? 'text-red-500' : 'text-orange-500'}">${statusText}</p>
-                        </div>
-                        <div class="flex flex-col items-end shrink-0">
-                            <div class="font-bold text-primary text-sm">${fRupiah(d.jumlah)}</div>
-                            <div class="text-[9px] text-slate-400 mt-1 font-medium flex items-center gap-1"><i class="ph-fill ph-clock"></i> ${waktuDonasi}</div>
+                            <div class="flex justify-between items-start gap-2">
+                                <div class="min-w-0">
+                                    <p class="font-bold text-sm text-slate-800 truncate">${safeName}</p>
+                                    <p class="text-[10px] text-slate-500 truncate mt-0.5">${d.program}</p>
+                                    <p class="text-[10px] font-bold mt-1 ${d.status === 'Verified' ? 'text-primary' : d.status === 'Ditolak' ? 'text-red-500' : 'text-orange-500'}">${statusText}</p>
+                                </div>
+                                <div class="flex flex-col items-end shrink-0">
+                                    <div class="font-black text-primary text-sm">${fRupiah(d.jumlah)}</div>
+                                    <div class="text-[9px] text-slate-400 mt-1 font-medium flex items-center gap-1"><i class="ph-fill ph-clock"></i> ${waktuDonasi}</div>
+                                </div>
+                            </div>
+                            ${elemenDoa}
                         </div>
                     </div>`;
             }).join('');
-        }                           
+        }                          
     </script>
 </body>
 </html>
