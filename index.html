@@ -219,8 +219,8 @@
                     <div class="flex justify-between items-center mb-3">
                         <h3 class="font-bold text-lg text-slate-800" data-i18n="donTerbaru">Donatur</h3>
                         <div class="flex gap-1 bg-slate-100 p-1 rounded-lg">
-                            <button onclick="sortDonatur('terbaru')" id="btn-sort-terbaru" class="px-3 py-1 text-[10px] font-bold rounded-md bg-white text-primary shadow-sm transition-all">Terbaru</button>
-                            <button onclick="sortDonatur('terbesar')" id="btn-sort-terbesar" class="px-3 py-1 text-[10px] font-bold rounded-md text-slate-500 hover:text-slate-700 transition-all">Terbesar</button>
+                            <button onclick="sortDonatur('terbaru')" id="btn-sort-terbaru" class="px-3 py-1 text-[10px] font-bold rounded-md bg-white text-primary shadow-sm transition-all" data-i18n="terbaru">Terbaru</button>
+                            <button onclick="sortDonatur('terbesar')" id="btn-sort-terbesar" class="px-3 py-1 text-[10px] font-bold rounded-md text-slate-500 hover:text-slate-700 transition-all" data-i18n="terbesar">Terbesar</button>
                         </div>
                     </div>
                     <div id="recent-donors-list" class="space-y-3">
@@ -954,13 +954,13 @@
             const diffMs = nowMidnight - dateMidnight;
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-            if (diffDays < 0) return 'Baru saja';
-            if (diffDays === 0) return 'Hari ini';
-            if (diffDays === 1) return 'Kemarin';
-            if (diffDays < 7) return `${diffDays} hari lalu`;
-            if (diffDays < 30) return `${Math.floor(diffDays/7)} minggu lalu`;
-            if (diffDays < 365) return `${Math.floor(diffDays/30)} bulan lalu`;
-            return `${Math.floor(diffDays/365)} tahun lalu`;
+            if (diffDays < 0) return t('baruSaja');
+            if (diffDays === 0) return t('hariIni');
+            if (diffDays === 1) return t('kemarin');
+            if (diffDays < 7) return `${diffDays} ${t('hariLalu')}`;
+            if (diffDays < 30) return `${Math.floor(diffDays/7)} ${t('mingguLalu')}`;
+            if (diffDays < 365) return `${Math.floor(diffDays/30)} ${t('bulanLalu')}`;
+            return `${Math.floor(diffDays/365)} ${t('tahunLalu')}`;
         }
 
         function showToast(msg) {
@@ -2359,6 +2359,15 @@
                 donasiAnonim: "Donasi atas nama Hamba Allah",
                 waPesan1: "*Fastabiqul Khairat!* Mari berlomba-lomba dalam kebaikan!\n\nAlhamdulillah, hari ini saya baru saja menyalurkan donasi untuk program *",
                 waPesan2: "* melalui WAZISQI Pondok Pesantren Al-Ittifaqiah Indralaya.\n\nHarta yang kita berikan di jalan Allah adalah amal jariyah yang pahalanya akan terus mengalir meski kita sudah tiada.\n\nYuk, ambil bagian dalam kebaikan ini! Salurkan amal jariyah terbaikmu dengan mudah, transparan, dan cepat melalui tautan resmi berikut:\nhttps://wazisqi.org/\n\nSedikit dari kita, sangat berarti untuk masa depan santri dan generasi umat. Jazaakumullah Khairan Katsiran!"
+                terbaru: "Terbaru",
+                terbesar: "Terbesar",
+                baruSaja: "Baru saja",
+                hariIni: "Hari ini",
+                kemarin: "Kemarin",
+                hariLalu: "hari lalu",
+                mingguLalu: "minggu lalu",
+                bulanLalu: "bulan lalu",
+                tahunLalu: "tahun lalu",
             },
             en: {
                 wakafZakat: "Endowment, Zakat, Infaq and Shadaqah<br>AL-ITTIFAQIAH Indralaya",
@@ -2461,6 +2470,15 @@
                 donasiAnonim: "Donate anonymously (Anonymous)",
                 waPesan1: "*Fastabiqul Khairat!* Let's compete in goodness!\n\nAlhamdulillah, today I just channeled a donation for the *",
                 waPesan2: "* program through WAZISQI Al-Ittifaqiah Indralaya Islamic Boarding School.\n\nWealth given in the way of Allah is an ongoing charity whose rewards will continue to flow even after we are gone.\n\nLet's take part in this goodness! Channel your best ongoing charity easily, transparently, and quickly through the following official link:\nhttps://wazisqi.org/\n\nA little from us means a lot for the future of the students and the generation of the ummah. May Allah reward you with goodness!"
+                terbaru: "Latest",
+                terbesar: "Largest",
+                baruSaja: "Just now",
+                hariIni: "Today",
+                kemarin: "Yesterday",
+                hariLalu: "days ago",
+                mingguLalu: "weeks ago",
+                bulanLalu: "months ago",
+                tahunLalu: "years ago",
             }
         };
 
