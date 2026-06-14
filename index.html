@@ -490,12 +490,27 @@
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-3">
-                        <label class="block text-sm font-bold text-slate-700" data-i18n="unggahBukti">Unggah Bukti Transfer</label>
-                        <input type="file" id="bukti_transfer" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 border border-dashed border-slate-200 p-3 rounded-xl cursor-pointer">
-                        <button onclick="handleUploadBukti()" id="btn-upload-bukti" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl flex justify-center items-center gap-2 transition duration-200">
-                            <span data-i18n="kirimBukti">Kirim Bukti Pembayaran</span>
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-sm font-bold text-slate-800">Bukti Transfer</label>
+                                <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md uppercase tracking-wider">Opsional</span>
+                            </div>
+                            <p class="text-[10px] text-slate-500 leading-relaxed">
+                                Lampirkan struk atau tangkapan layar untuk mempercepat proses verifikasi oleh admin.
+                            </p>
+                        </div>
+
+                        <div class="mb-6">
+                            <input type="file" id="bukti_transfer" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 border border-dashed border-slate-200 hover:border-emerald-300 bg-slate-50/50 p-2 rounded-2xl cursor-pointer transition-all outline-none">
+                        </div>
+
+                        <button onclick="handleUploadBukti()" id="btn-upload-bukti" class="w-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex justify-center items-center gap-2 group">
+                            <i class="ph-bold ph-check-circle text-xl group-hover:scale-110 transition-transform"></i>
+                            <span>Saya Sudah Transfer</span>
                         </button>
+                        
                     </div>
 
                     <div class="text-center pt-2">
@@ -526,7 +541,7 @@
                         <div>
                             <span class="font-bold text-orange-700 text-sm block leading-none mb-1" data-i18n="menungguVerif">Menunggu Verifikasi</span>
                             <p class="text-[10px] text-orange-600 leading-tight" data-i18n="buktiDiterima">
-                                Bukti transfer diterima. Kami akan memverifikasi dan mengirimkan notifikasi WA.
+                                Konfirmasi pembayaran diterima. Admin akan melakukan pengecekan dan mengirimkan notifikasi WA setelah dana diverifikasi.
                             </p>
                         </div>
                     </div>
@@ -1595,39 +1610,49 @@
             const fileInput = document.getElementById('bukti_transfer');
             const btn = document.getElementById('btn-upload-bukti');
 
-            if (fileInput.files.length === 0) {
-                showToast(currentLang === 'id' ? "Pilih file bukti transfer dahulu" : "Please select a transfer proof file first");
-                return;
-            }
-
-            const file = fileInput.files[0];
+            // Ubah tombol jadi loading
             btn.disabled = true;
-            btn.innerHTML = '<i class="ph ph-circle-notch animate-spin"></i> ' + (currentLang === 'id' ? 'Mengunggah...' : 'Uploading...');
+            btn.innerHTML = '<i class="ph ph-circle-notch animate-spin"></i> Memproses...';
 
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64 = e.target.result.split(',')[1];
+            // Fungsi bantuan untuk mengirim data ke server
+            const submitDataKeServer = async (buktiObj) => {
                 try {
-                    const payload = {
-                        ...tempDonasiData,
-                        bukti: { base64: base64, type: file.type }
-                    };
+                    const payload = { ...tempDonasiData, bukti: buktiObj };
                     const res = await runGAS('submitDonasiLengkap', payload);
 
                     if (res.success) {
                         currentTrxId = res.trxId || tempDonasiData.trxId;
                         tampilkanSuccessState();
                     } else {
-                        showToast(res.message || "Gagal upload bukti");
+                        showToast(res.message || "Gagal memproses donasi");
+                        resetTombol();
                     }
                 } catch(err) {
                     console.error(err);
-                    showToast("Gagal upload file");
+                    showToast("Gagal mengirim data");
+                    resetTombol();
                 }
-                btn.disabled = false;
-                btn.innerHTML = `<span data-i18n="kirimBukti">${t('kirimBukti')}</span>`;
             };
-            reader.readAsDataURL(file);
+
+            const resetTombol = () => {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Selesaikan & Konfirmasi Pembayaran</span>';
+            };
+
+            // CEK APAKAH DONATUR MEMASUKKAN FOTO ATAU TIDAK
+            if (fileInput.files.length > 0) {
+                // JIKA ADA FOTO: Ubah jadi base64 dulu baru kirim
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result.split(',')[1];
+                    submitDataKeServer({ base64: base64, type: file.type });
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // JIKA TIDAK ADA FOTO: Langsung tembak ke server (Jauh lebih cepat!)
+                submitDataKeServer(null);
+            }
         }
 
         function resetDonasi() {
