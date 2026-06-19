@@ -2832,11 +2832,12 @@
         // Default filter saat pertama kali web dibuka
         let filterProgramSaatIni = 'berlangsung'; 
         
-        // Fungsi untuk mengganti filter dan gaya tombol
+        // Ganti fungsi setFilterProgram lama Anda dengan ini:
         function setFilterProgram(jenisFilter) {
-            filterProgramSaatIni = jenisFilter;
+            // Update variabel global yang dipakai oleh renderPrograms
+            waktuSaatIni = jenisFilter; 
             
-            // Daftar semua tombol filter
+            // Daftar semua tombol filter waktu
             const tombol = ['berlangsung', 'berakhir', 'semua'];
             
             tombol.forEach(t => {
@@ -2844,17 +2845,16 @@
                 if (!elemen) return;
         
                 if (t === jenisFilter) {
-                    // Gaya saat tombol aktif
+                    // Gaya saat tombol aktif (Warna Hijau)
                     elemen.className = "px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-emerald-500 text-white shadow-[0_4px_10px_rgba(16,185,129,0.3)] flex-shrink-0";
                 } else {
-                    // Gaya saat tombol tidak aktif
+                    // Gaya saat tombol tidak aktif (Warna Abu-abu)
                     elemen.className = "px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-slate-100 text-slate-500 hover:bg-slate-200 flex-shrink-0";
                 }
             });
         
-            // Panggil kembali fungsi yang merender/menampilkan program Anda
-            // (Ganti 'renderProgram()' dengan nama fungsi asli yang Anda gunakan)
-            renderProgram(); 
+            // Panggil ulang fungsi render untuk menerapkan filter
+            renderPrograms(); 
         }
     </script>
 </body>
