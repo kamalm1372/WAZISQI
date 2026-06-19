@@ -204,6 +204,18 @@
                             <p class="text-xs text-slate-500" data-i18n="pilihProg">Pilih program amal jariyah</p>
                         </div>
                     </div>
+                    <!-- Filter Program -->
+                    <div class="flex gap-2 mb-4 overflow-x-auto hide-scrollbar pb-1">
+                        <button onclick="setFilterProgram('berlangsung')" id="btn-filter-berlangsung" class="px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-emerald-500 text-white shadow-[0_4px_10px_rgba(16,185,129,0.3)] flex-shrink-0">
+                            Sedang Berlangsung
+                        </button>
+                        <button onclick="setFilterProgram('berakhir')" id="btn-filter-berakhir" class="px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-slate-100 text-slate-500 hover:bg-slate-200 flex-shrink-0">
+                            Telah Berakhir
+                        </button>
+                        <button onclick="setFilterProgram('semua')" id="btn-filter-semua" class="px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-slate-100 text-slate-500 hover:bg-slate-200 flex-shrink-0">
+                            Semua
+                        </button>
+                    </div>                   
                     <div id="program-list-container" class="grid grid-cols-1 gap-4">
                         <div class="animate-pulse flex space-x-4 bg-white p-4 rounded-xl shadow-sm">
                             <div class="rounded-lg bg-slate-200 h-24 w-24"></div>
@@ -1138,18 +1150,57 @@
             renderDonaturList('terbaru');          
         }
 
-        function renderPrograms(filter = 'Semua') {
+        // 1. Tambahkan dua variabel global ini di luar fungsi
+        let kategoriSaatIni = 'Semua';
+        let waktuSaatIni = 'berlangsung';
+        
+        // 2. Ganti fungsi renderPrograms Anda dengan yang ini
+        function renderPrograms(filterCat) {
+            // Jika ada parameter kategori baru yang masuk, update state-nya
+            if (filterCat !== undefined) {
+                kategoriSaatIni = filterCat;
+            }
+        
             const container = document.getElementById('program-list-container');
-            const activePrograms = appPrograms.filter(p => p.status === "Aktif");
-            const filtered = filter === 'Semua' ? activePrograms : activePrograms.filter(p => p.kategori === filter);
+            
+            // Normalisasi waktu hari ini untuk cek deadline
+            const sekarang = new Date();
+            sekarang.setHours(0, 0, 0, 0);
+        
+            // Filter Gabungan (Berdasarkan Kategori & Waktu/Status)
+            const filtered = appPrograms.filter(p => {
+                // --- A. Cek Kategori ---
+                const matchKategori = (kategoriSaatIni === 'Semua') ? true : (p.kategori === kategoriSaatIni);
+                if (!matchKategori) return false; // Jika kategori tidak cocok, lewati
+        
+                // --- B. Cek Waktu / Status ---
+                let isBerakhir = false;
+                if (p.status === 'Nonaktif') {
+                    isBerakhir = true;
+                }
+                if (!isBerakhir && p.deadline) {
+                    const batasWaktu = new Date(p.deadline);
+                    batasWaktu.setHours(0, 0, 0, 0);
+                    if (batasWaktu.getTime() - sekarang.getTime() <= 0) {
+                        isBerakhir = true;
+                    }
+                }
+        
+                // --- C. Cocokkan dengan Tab Waktu (Berlangsung/Berakhir) ---
+                if (waktuSaatIni === 'semua') return true;
+                if (waktuSaatIni === 'berlangsung') return !isBerakhir; // Hanya yg belum berakhir
+                if (waktuSaatIni === 'berakhir') return isBerakhir;     // Hanya yg sudah berakhir
+            });
             
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="text-center bg-white p-6 rounded-2xl border border-slate-100"><p class="text-xs text-slate-400 italic font-medium">Belum ada program di kategori ${filter}</p></div>`;
+                container.innerHTML = `<div class="text-center bg-white p-6 rounded-2xl border border-slate-100"><p class="text-xs text-slate-400 italic font-medium">Belum ada program di kategori ini</p></div>`;
                 return;
             }
-
+        
             container.innerHTML = filtered.map(p => {
                 const pct = p.target > 0 ? Math.min(Math.round((p.terkumpul / p.target) * 100), 100) : 0;
+                
+                // (Isi HTML ini persis sama dengan kode asli Anda)
                 return `
                 <div onclick="goToDonasi('${p.id}')" class="bg-white rounded-2xl p-4 flex flex-col gap-3 shadow-sm border border-slate-100 hover:shadow-md hover:border-emerald-300 transition-all duration-300 cursor-pointer group">
                     
@@ -1171,13 +1222,13 @@
                             ` : ''}
                         </div>
                     </div>
-
+        
                     <div class="w-full pt-3 border-t border-slate-100">
                         <div class="flex justify-between items-center mb-3">
                             ${p.unitPrice > 0 ? `<span class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-200 text-[10px] font-bold text-amber-700 rounded-md shadow-sm"><i class="ph-fill ph-tag"></i> Mulai ${fRupiah(p.unitPrice)} / porsi</span>` : '<div></div>'}
                             <span class="text-[10px] text-slate-400 font-bold">${t('target')}: <b class="text-slate-600">${fRupiah(p.target)}</b></span>
                         </div>
-
+        
                         <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden mb-2">
                             <div class="bg-primary h-full" style="width: ${pct}%"></div>
                         </div>
@@ -1195,6 +1246,27 @@
                     </div>
                 </div>`;
             }).join('');
+        }
+        
+        // 3. Tambahkan fungsi baru ini tepat di bawah renderPrograms
+        function setFilterWaktu(jenisFilter) {
+            waktuSaatIni = jenisFilter;
+            
+            // Ubah gaya tombol filter Waktu
+            const tombol = ['berlangsung', 'berakhir', 'semua'];
+            tombol.forEach(t => {
+                const elemen = document.getElementById(`btn-filter-${t}`);
+                if (!elemen) return;
+        
+                if (t === jenisFilter) {
+                    elemen.className = "px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-emerald-500 text-white shadow-[0_4px_10px_rgba(16,185,129,0.3)] flex-shrink-0";
+                } else {
+                    elemen.className = "px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-slate-100 text-slate-500 hover:bg-slate-200 flex-shrink-0";
+                }
+            });
+        
+            // Panggil ulang render (tanpa parameter agar menggunakan kategoriSaatIni)
+            renderPrograms(); 
         }
 
         function filterProgram(cat) {
@@ -2753,6 +2825,33 @@
                     donaturSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             }, 150);
+        }
+        // Default filter saat pertama kali web dibuka
+        let filterProgramSaatIni = 'berlangsung'; 
+        
+        // Fungsi untuk mengganti filter dan gaya tombol
+        function setFilterProgram(jenisFilter) {
+            filterProgramSaatIni = jenisFilter;
+            
+            // Daftar semua tombol filter
+            const tombol = ['berlangsung', 'berakhir', 'semua'];
+            
+            tombol.forEach(t => {
+                const elemen = document.getElementById(`btn-filter-${t}`);
+                if (!elemen) return;
+        
+                if (t === jenisFilter) {
+                    // Gaya saat tombol aktif
+                    elemen.className = "px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-emerald-500 text-white shadow-[0_4px_10px_rgba(16,185,129,0.3)] flex-shrink-0";
+                } else {
+                    // Gaya saat tombol tidak aktif
+                    elemen.className = "px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-slate-100 text-slate-500 hover:bg-slate-200 flex-shrink-0";
+                }
+            });
+        
+            // Panggil kembali fungsi yang merender/menampilkan program Anda
+            // (Ganti 'renderProgram()' dengan nama fungsi asli yang Anda gunakan)
+            renderProgram(); 
         }
     </script>
 </body>
