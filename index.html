@@ -2759,10 +2759,10 @@
 
             // LOGIKA FILTER
             if (sortBy === 'terbaru') {
-                donors = donors.slice(-10).reverse(); // 10 data terakhir masuk
+                donors = donors.slice(-20).reverse(); // 20 data terakhir masuk
             } else if (sortBy === 'terbesar') {
-                // Urutkan nominal dari besar ke kecil, lalu ambil 10 teratas
-                donors = [...donors].sort((a, b) => Number(b.jumlah) - Number(a.jumlah)).slice(0, 10);
+                // Urutkan nominal dari besar ke kecil, lalu ambil 15 teratas
+                donors = [...donors].sort((a, b) => Number(b.jumlah) - Number(a.jumlah)).slice(0, 15);
             }
 
             if(donors.length === 0) {
