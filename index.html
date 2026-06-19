@@ -1167,29 +1167,32 @@
             const sekarang = new Date();
             sekarang.setHours(0, 0, 0, 0);
         
-            // Filter Gabungan (Berdasarkan Kategori & Waktu/Status)
+            // Filter Gabungan yang Benar
             const filtered = appPrograms.filter(p => {
-                // --- A. Cek Kategori ---
-                const matchKategori = (kategoriSaatIni === 'Semua') ? true : (p.kategori === kategoriSaatIni);
-                if (!matchKategori) return false; // Jika kategori tidak cocok, lewati
+                // --- 1. FILTER UTAMA (VISIBILITAS) ---
+                // Jika program disembunyikan admin (Nonaktif), langsung buang dari daftar
+                if (p.status !== 'Aktif') return false;
         
-                // --- B. Cek Waktu / Status ---
+                // --- 2. FILTER KATEGORI (Infaq, Wakaf, dll) ---
+                const matchKategori = (kategoriSaatIni === 'Semua') ? true : (p.kategori === kategoriSaatIni);
+                if (!matchKategori) return false;
+        
+                // --- 3. CEK DEADLINE (Untuk menentukan Berlangsung / Berakhir) ---
                 let isBerakhir = false;
-                if (p.status === 'Nonaktif') {
-                    isBerakhir = true;
-                }
-                if (!isBerakhir && p.deadline) {
+                if (p.deadline) {
                     const batasWaktu = new Date(p.deadline);
                     batasWaktu.setHours(0, 0, 0, 0);
+                    
+                    // Jika hari ini sudah melewati deadline (atau pas hari H jika <= 0)
                     if (batasWaktu.getTime() - sekarang.getTime() <= 0) {
                         isBerakhir = true;
                     }
                 }
         
-                // --- C. Cocokkan dengan Tab Waktu (Berlangsung/Berakhir) ---
+                // --- 4. COCOKKAN DENGAN TAB WAKTU (Berlangsung / Berakhir) ---
                 if (waktuSaatIni === 'semua') return true;
-                if (waktuSaatIni === 'berlangsung') return !isBerakhir; // Hanya yg belum berakhir
-                if (waktuSaatIni === 'berakhir') return isBerakhir;     // Hanya yg sudah berakhir
+                if (waktuSaatIni === 'berlangsung') return !isBerakhir; // Tampilkan yang belum lewat deadline
+                if (waktuSaatIni === 'berakhir') return isBerakhir;     // Tampilkan yang sudah lewat deadline
             });
             
             if (filtered.length === 0) {
