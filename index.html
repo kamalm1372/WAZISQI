@@ -440,13 +440,22 @@
                         <h3 class="text-xl font-bold text-slate-800" data-i18n="formTerkirim">Formulir Terkirim</h3>
                         <p class="text-xs text-slate-500 px-4 mt-2">Silakan lakukan pembayaran melalui salah satu metode di bawah ini:</p>
                         
-                        <div class="mt-6 space-y-6">
+                        <!-- TOMBOL PILIHAN METODE PEMBAYARAN -->
+                        <div class="mt-5 flex gap-3">
+                            <button id="btn-metode-transfer" onclick="pilihMetodePembayaran('transfer')" class="flex-1 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white font-bold py-3 rounded-xl shadow-[0_8px_20px_-6px_rgba(16,185,129,0.6)] active:scale-95 transition-all text-sm flex items-center justify-center gap-2 border-2 border-transparent">
+                                <i class="ph-bold ph-bank"></i> Transfer Bank
+                            </button>
+                            <button id="btn-metode-qris" onclick="pilihMetodePembayaran('qris')" class="flex-1 bg-slate-50 text-slate-400 font-bold py-3 rounded-xl active:scale-95 transition-all text-sm flex items-center justify-center gap-2 border-2 border-slate-200 hover:bg-slate-100 hover:text-slate-600">
+                                <i class="ph-bold ph-qr-code"></i> QRIS
+                            </button>
+                        </div>
+
+                        <!-- WADAH INFORMASI PEMBAYARAN -->
+                        <div class="mt-4 relative">
                             
-                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 relative text-center">
-                                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-bold border border-emerald-200 whitespace-nowrap shadow-sm">
-                                    Transfer Bank (BSI)
-                                </div>
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Bank_Syariah_Indonesia.svg" class="h-6 mx-auto mb-3 mt-3">
+                            <!-- 1. Card Bank (Default Tampil) -->
+                            <div id="metode-transfer" class="p-4 bg-slate-50 rounded-2xl border border-slate-200 relative text-center animate-[fadeIn_0.3s_ease-out]">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Bank_Syariah_Indonesia.svg" class="h-6 mx-auto mb-3">
                                 <p class="text-2xl font-mono font-black text-slate-800 tracking-wider" id="no_rekening">7361607947</p>
                                 <p class="text-xs font-bold text-slate-500 mt-1 uppercase">a.n Wazisqi Al Ittifaqiah</p>
                                 
@@ -455,11 +464,9 @@
                                 </button>
                             </div>
                 
-                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 relative text-center">
-                                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-bold border border-emerald-200 whitespace-nowrap shadow-sm">
-                                    QRIS (Semua E-Wallet & M-Banking)
-                                </div>
-                                <img src="https://lh3.googleusercontent.com/d/1JfqBmf1Bryk6gZ0L3MJgp2Ofb5k8Hul9" alt="QRIS WAZISQI" class="w-48 mx-auto mt-4 rounded-xl border border-slate-200 shadow-sm mix-blend-multiply">
+                            <!-- 2. Card QRIS (Default Sembunyi) -->
+                            <div id="metode-qris" class="hidden p-4 bg-slate-50 rounded-2xl border border-slate-200 relative text-center animate-[fadeIn_0.3s_ease-out]">
+                                <img src="https://lh3.googleusercontent.com/d/1JfqBmf1Bryk6gZ0L3MJgp2Ofb5k8Hul9" alt="QRIS WAZISQI" class="w-48 mx-auto mt-2 rounded-xl border border-slate-200 shadow-sm mix-blend-multiply">
                                 <p class="text-[10px] font-bold text-slate-500 mt-3 uppercase leading-relaxed">
                                     Scan kode QRIS di atas untuk membayar
                                 </p>
@@ -1733,6 +1740,8 @@
             document.getElementById('quick-unit').classList.add('hidden');                    
             currentTrxId = null;
 
+            pilihMetodePembayaran('transfer');
+
             // Reset status toggle anonim
             const toggle = document.getElementById('toggle-anonim');
             if (toggle) toggle.checked = false;
@@ -2869,6 +2878,29 @@
             // Panggil ulang fungsi render untuk menerapkan filter
             renderPrograms(); 
         }
+        function pilihMetodePembayaran(metode) {
+            const btnTransfer = document.getElementById('btn-metode-transfer');
+            const btnQris = document.getElementById('btn-metode-qris');
+            const boxTransfer = document.getElementById('metode-transfer');
+            const boxQris = document.getElementById('metode-qris');
+
+            // Class untuk tombol gaya Nebula Hijau (Aktif)
+            const styleAktif = "flex-1 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white font-bold py-3 rounded-xl shadow-[0_8px_20px_-6px_rgba(16,185,129,0.6)] active:scale-95 transition-all text-sm flex items-center justify-center gap-2 border-2 border-transparent";
+            // Class untuk tombol gaya Abu-abu (Tidak Aktif)
+            const styleNonAktif = "flex-1 bg-slate-50 text-slate-400 font-bold py-3 rounded-xl active:scale-95 transition-all text-sm flex items-center justify-center gap-2 border-2 border-slate-200 hover:bg-slate-100 hover:text-slate-600";
+
+            if (metode === 'transfer') {
+                btnTransfer.className = styleAktif;
+                btnQris.className = styleNonAktif;
+                boxTransfer.classList.remove('hidden');
+                boxQris.classList.add('hidden');
+            } else if (metode === 'qris') {
+                btnQris.className = styleAktif;
+                btnTransfer.className = styleNonAktif;
+                boxQris.classList.remove('hidden');
+                boxTransfer.classList.add('hidden');
+            }
+        }        
     </script>
 </body>
 </html>
