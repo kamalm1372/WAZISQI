@@ -2725,11 +2725,23 @@
         });  
 
         // --- SISTEM PEMBACA URL (MENCEGAH KEMBALI KE BERANDA SAAT REFRESH) ---
-        function bacaUrlSaatIni() {
+                function bacaUrlSaatIni() {
             const path = window.location.pathname.substring(1); // Ambil kata setelah garis miring (/)
             const menuUtama = ['beranda', 'donasi', 'laporan', 'kontak', 'admin'];
             
             if (menuUtama.includes(path)) {
+                // --- PROTEKSI: /admin wajib login, tolak akses langsung ---
+                if (path === 'admin' && !isAdmin) {
+                    window.history.replaceState({}, '', '/beranda');
+                    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                    document.getElementById('view-beranda').classList.add('active');
+                    const navBeranda = document.getElementById('nav-beranda');
+                    if (navBeranda) navBeranda.classList.add('active');
+                    openModalLogin();
+                    return;
+                }
+
                 // Paksa pindah tampilan tanpa pushState lagi
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
