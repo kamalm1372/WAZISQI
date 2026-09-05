@@ -204,6 +204,18 @@
                             <p class="text-xs text-slate-500" data-i18n="pilihProg">Pilih program amal jariyah</p>
                         </div>
                     </div>
+                    <!-- Filter Program -->
+                    <div class="flex gap-2 mb-4 overflow-x-auto hide-scrollbar pb-1">
+                        <button onclick="setFilterProgram('berlangsung')" id="btn-filter-berlangsung" class="px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-emerald-500 text-white shadow-[0_4px_10px_rgba(16,185,129,0.3)] flex-shrink-0">
+                            Sedang Berlangsung
+                        </button>
+                        <button onclick="setFilterProgram('berakhir')" id="btn-filter-berakhir" class="px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-slate-100 text-slate-500 hover:bg-slate-200 flex-shrink-0">
+                            Telah Berakhir
+                        </button>
+                        <button onclick="setFilterProgram('semua')" id="btn-filter-semua" class="px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-slate-100 text-slate-500 hover:bg-slate-200 flex-shrink-0">
+                            Semua
+                        </button>
+                    </div>                   
                     <div id="program-list-container" class="grid grid-cols-1 gap-4">
                         <div class="animate-pulse flex space-x-4 bg-white p-4 rounded-xl shadow-sm">
                             <div class="rounded-lg bg-slate-200 h-24 w-24"></div>
@@ -215,7 +227,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="pt-4 border-t border-slate-200">
+                <div id="section-donatur" class="pt-4 border-t border-slate-200">
                     <div class="flex justify-between items-center mb-3">
                         <h3 class="font-bold text-lg text-slate-800" data-i18n="donTerbaru">Donatur</h3>
                         <div class="flex gap-1 bg-slate-100 p-1 rounded-lg">
@@ -426,18 +438,49 @@
                         </div>
                         
                         <h3 class="text-xl font-bold text-slate-800" data-i18n="formTerkirim">Formulir Terkirim</h3>
-                        <p class="text-xs text-slate-500 px-4" data-i18n="silakanTransfer">Silakan transfer sesuai nominal ke rekening di bawah ini:</p>
+                        <p class="text-xs text-slate-500 px-4 mt-2">Silakan lakukan pembayaran melalui salah satu metode di bawah ini:</p>
                         
-                        <div class="mt-6 p-4 bg-slate-50 rounded-2xl border border-slate-100 relative">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Bank_Syariah_Indonesia.svg" class="h-6 mx-auto mb-3">
-                            <p class="text-2xl font-mono font-black text-slate-800 tracking-wider" id="no_rekening">9104286800</p>
-                            <p class="text-xs font-bold text-slate-500 mt-1 uppercase">a.n Pondok Pesantren Al Ittifaqiah</p>
-                            
-                            <button onclick="salinRekening()" class="mt-3 text-xs bg-white border border-emerald-200 text-emerald-600 px-4 py-1.5 rounded-full font-bold shadow-sm" data-i18n="salinRek">
-                                Salin No. Rek
+                        <!-- TOMBOL PILIHAN METODE PEMBAYARAN -->
+                        <div class="mt-5 flex gap-3">
+                            <button id="btn-metode-transfer" onclick="pilihMetodePembayaran('transfer')" class="flex-1 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white font-bold py-3 rounded-xl shadow-[0_8px_20px_-6px_rgba(16,185,129,0.6)] active:scale-95 transition-all text-sm flex items-center justify-center gap-2 border-2 border-transparent">
+                                <i class="ph-bold ph-bank"></i> Transfer Bank
                             </button>
+                            <button id="btn-metode-qris" onclick="pilihMetodePembayaran('qris')" class="flex-1 bg-slate-50 text-slate-400 font-bold py-3 rounded-xl active:scale-95 transition-all text-sm flex items-center justify-center gap-2 border-2 border-slate-200 hover:bg-slate-100 hover:text-slate-600">
+                                <i class="ph-bold ph-qr-code"></i> QRIS
+                            </button>
+                        </div>
 
-                            <div class="mt-5 bg-white rounded-xl p-4 border border-slate-100">
+                        <!-- WADAH INFORMASI PEMBAYARAN -->
+                        <div class="mt-4 relative">
+                            
+                            <!-- 1. Card Bank (Default Tampil) -->
+                            <div id="metode-transfer" class="p-4 bg-slate-50 rounded-2xl border border-slate-200 relative text-center animate-[fadeIn_0.3s_ease-out]">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Bank_Syariah_Indonesia.svg" class="h-6 mx-auto mb-3">
+                                <p class="text-2xl font-mono font-black text-slate-800 tracking-wider" id="no_rekening">7361607947</p>
+                                <p class="text-xs font-bold text-slate-500 mt-1 uppercase">a.n Wazisqi Al Ittifaqiah</p>
+                                
+                                <button onclick="salinRekening()" class="mt-3 text-xs bg-white border border-emerald-200 text-emerald-600 hover:bg-emerald-50 active:scale-95 transition-all px-4 py-1.5 rounded-full font-bold shadow-sm" data-i18n="salinRek">
+                                    Salin No. Rek
+                                </button>
+                            </div>
+                
+                            <!-- 2. Card QRIS (Default Sembunyi) -->
+                            <div id="metode-qris" class="hidden p-4 bg-slate-50 rounded-2xl border border-slate-200 relative text-center animate-[fadeIn_0.3s_ease-out]">
+                                <img src="https://lh3.googleusercontent.com/d/1JfqBmf1Bryk6gZ0L3MJgp2Ofb5k8Hul9" alt="QRIS WAZISQI" class="w-72 mx-auto mt-2 rounded-xl border border-slate-200 shadow-sm mix-blend-multiply">
+                                
+                                <p class="text-[10px] font-bold text-slate-500 mt-3 uppercase leading-relaxed" data-i18n="scanQris">
+                                    Scan kode QRIS di atas untuk berdonasi
+                                </p>
+
+                                <a href="https://lh3.googleusercontent.com/d/1JfqBmf1Bryk6gZ0L3MJgp2Ofb5k8Hul9" download="QRIS_WAZISQI.png" target="_blank" class="mt-4 inline-flex items-center justify-center gap-2 bg-white border border-emerald-200 text-emerald-600 hover:bg-emerald-50 active:scale-95 transition-all px-5 py-2.5 rounded-full font-bold shadow-sm text-xs w-full max-w-[250px]">
+                                    <i class="ph-bold ph-download-simple text-base"></i> <span data-i18n="unduhQris">Simpan gambar QRIS</span>
+                                </a>
+                            </div>
+                
+                        </div>
+                
+                        <div class="mt-6 p-4 bg-slate-50 rounded-2xl border border-slate-100 relative">
+                            <div class="bg-white rounded-xl p-4 border border-slate-100">
                                 <div class="flex justify-between text-sm mb-2">
                                     <span class="text-slate-500" data-i18n="labelNominal">Nominal Donasi</span>
                                     <span class="font-bold" id="info-nominal-donasi">Rp 0</span>
@@ -445,10 +488,6 @@
                                 <div class="flex justify-between text-sm mb-2">
                                     <span class="text-slate-500"><span data-i18n="kodeUnik">Kode Unik</span> <span class="text-[9px] bg-orange-100 text-orange-600 px-1 py-0.5 rounded" data-i18n="penanda">Penanda</span></span>
                                     <span class="font-bold text-orange-500" id="info-kode-unik">+0</span>
-                                </div>
-                                <div class="flex justify-between text-sm mb-2">
-                                    <span class="text-slate-500" data-i18n="biayaAdmin">Biaya Admin</span>
-                                    <span class="font-bold text-emerald-600" data-i18n="gratis">Gratis</span>
                                 </div>
                                 <hr class="my-2 border-dashed border-slate-200">
                                 <div class="flex justify-between items-center mt-2">
@@ -461,7 +500,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- KOTAK BATAS WAKTU PEMBAYARAN -->
+                            
                             <div class="mt-3 bg-red-50 border border-red-100 rounded-xl p-3 flex items-center justify-between shadow-sm">
                                 <div class="text-left min-w-0">
                                     <p class="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-0.5">Batas Waktu Pembayaran</p>
@@ -472,7 +511,7 @@
                                     <i class="ph-fill ph-timer text-lg animate-pulse"></i>
                                 </div>
                             </div>
-
+                
                             <div class="mt-3 bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-left">
                                 <p class="text-[11px] text-emerald-700 leading-relaxed" data-i18n="mohonTransfer">
                                     Mohon transfer tepat hingga 3 digit terakhir agar memudahkan verifikasi.
@@ -480,9 +519,8 @@
                             </div>
                         </div>
                     </div>
-
+                
                     <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                        
                         <div class="mb-4">
                             <div class="flex justify-between items-center mb-1">
                                 <label class="block text-sm font-bold text-slate-800">Bukti Transfer</label>
@@ -492,18 +530,17 @@
                                 Lampirkan struk atau tangkapan layar untuk mempercepat proses verifikasi oleh admin.
                             </p>
                         </div>
-
+                
                         <div class="mb-6">
                             <input type="file" id="bukti_transfer" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 border border-dashed border-slate-200 hover:border-emerald-300 bg-slate-50/50 p-2 rounded-2xl cursor-pointer transition-all outline-none">
                         </div>
-
+                
                         <button onclick="handleUploadBukti()" id="btn-upload-bukti" class="w-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex justify-center items-center gap-2 group">
                             <i class="ph-bold ph-check-circle text-xl group-hover:scale-110 transition-transform"></i>
                             <span>Saya Sudah Transfer</span>
                         </button>
-                        
                     </div>
-
+                
                     <div class="text-center pt-2">
                         <button onclick="resetDonasi()" class="text-sm text-slate-400 font-medium underline hover:text-slate-600 transition" data-i18n="kembali">
                             Lihat Program Lainnya
@@ -718,9 +755,9 @@
                         </div>
                         <div class="flex-1 relative z-10 min-w-0">
                             <p class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-0.5" data-i18n="adminWazisqi">Admin WAZISQI</p>
-                            <p class="text-xs font-semibold text-slate-600 truncate">+62 889 7508 9958</p>
+                            <p class="text-xs font-semibold text-slate-600 truncate">+628 58 9619 2042</p>
                         </div>
-                        <a href="https://wa.me/6288975089958" target="_blank" class="w-8 h-8 bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white flex items-center justify-center rounded-lg shadow-sm transition active:scale-90 relative z-10 shrink-0">
+                        <a href="https://wa.me/6285896192042" target="_blank" class="w-8 h-8 bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white flex items-center justify-center rounded-lg shadow-sm transition active:scale-90 relative z-10 shrink-0">
                             <i class="ph-bold ph-chat-teardrop-dots text-lg"></i>
                         </a>
                     </div>
@@ -789,29 +826,43 @@
 
         </main>
 
-        <nav id="bottom-nav" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-[408px] z-50 p-[2px] bg-gradient-to-r from-emerald-500 via-emerald-400 to-amber-400 rounded-full shadow-[0_20px_40px_-10px_rgba(126,184,150,0.4)]">
-            <div class="flex justify-around items-center bg-white/95 backdrop-blur-2xl rounded-full h-[71px] px-2 w-full">
+        <nav id="bottom-nav" class="fixed bottom-2 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-[408px] z-50 p-[2px] bg-gradient-to-r from-emerald-500 via-emerald-400 to-amber-400 rounded-full shadow-[0_20px_40px_-10px_rgba(126,184,150,0.4)]">
+            <div class="flex justify-around items-center bg-white/95 backdrop-blur-2xl rounded-full h-[71px] px-2 w-full relative">
                 
-                <button onclick="router('beranda')" class="nav-item active flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-16 group" id="nav-beranda">
-                    <i class="ph-fill ph-house text-[26px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
-                    <span class="text-[10px] font-bold tracking-tight" data-i18n="navBeranda">Beranda</span>
+                <!-- 1. Beranda (Update: tambah window.scrollTo ke paling atas) -->
+                <button onclick="router('beranda'); window.scrollTo({top: 0, behavior: 'smooth'});" class="nav-item active flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-[15%] group" id="nav-beranda">
+                    <i class="ph-fill ph-house text-[24px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
+                    <span class="text-[9px] font-bold tracking-tight" data-i18n="navBeranda">Beranda</span>
                 </button>
                 
-                <button onclick="router('donasi')" class="nav-item flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-16 group" id="nav-donasi">
-                    <i class="ph-fill ph-heart text-[26px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
-                    <span class="text-[10px] font-bold tracking-tight" data-i18n="navDonasi">Donasi</span>
+                <!-- Donatur -->
+                <button onclick="scrollToDonatur()" class="nav-item flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-[15%] group" id="nav-donatur">
+                    <i class="ph-fill ph-users text-[24px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
+                    <!-- Tambahkan data-i18n="navDonatur" -->
+                    <span class="text-[9px] font-bold tracking-tight" data-i18n="navDonatur">Donatur</span>
                 </button>
                 
-                <button onclick="router('laporan')" class="nav-item flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-16 group" id="nav-laporan">
-                    <i class="ph-fill ph-article text-[26px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
-                    <span class="text-[10px] font-bold tracking-tight" data-i18n="navLaporan">Laporan</span>
+                <!-- 2. Donasi -->
+                <div onclick="router('donasi')" class="w-[20%] flex flex-col items-center justify-end h-full relative pb-[8px] cursor-pointer group">
+                    <div class="absolute -top-[22px] flex flex-col items-center justify-center w-[58px] h-[58px] bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-full shadow-[0_10px_20px_rgba(16,185,129,0.4)] border-4 border-white transition-transform duration-300 group-active:scale-95 z-50" id="nav-donasi-btn">
+                        <i class="ph-fill ph-heart text-3xl"></i>
+                    </div>
+                    <!-- Tambahkan data-i18n="navDonasi" -->
+                    <span class="text-[9px] font-bold tracking-tight text-emerald-600 transition-transform duration-300 group-active:scale-95 z-40" data-i18n="navDonasi">Donasi</span>
+                </div>
+                
+                <!-- Laporan -->
+                <button onclick="router('laporan')" class="nav-item flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-[15%] group" id="nav-laporan">
+                    <i class="ph-fill ph-article text-[24px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
+                    <span class="text-[9px] font-bold tracking-tight" data-i18n="navLaporan">Laporan</span>
                 </button>
                 
-                <button onclick="router('kontak')" class="nav-item flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-16 group" id="nav-kontak">
-                    <i class="ph-fill ph-user-circle text-[26px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
-                    <span class="text-[10px] font-bold tracking-tight" data-i18n="navProfil">Profil</span>
+                <!-- Profil/Kontak -->
+                <button onclick="router('kontak')" class="nav-item flex flex-col items-center justify-center p-2 text-slate-400 transition-all duration-300 w-[15%] group" id="nav-kontak">
+                    <i class="ph-fill ph-user-circle text-[24px] mb-1 transition-transform duration-300 group-active:scale-75"></i>
+                    <span class="text-[9px] font-bold tracking-tight" data-i18n="navProfil">Profil</span>
                 </button>
-
+        
             </div>
         </nav>
         
@@ -1124,18 +1175,60 @@
             renderDonaturList('terbaru');          
         }
 
-        function renderPrograms(filter = 'Semua') {
+        // 1. Tambahkan dua variabel global ini di luar fungsi
+        let kategoriSaatIni = 'Semua';
+        let waktuSaatIni = 'berlangsung';
+        
+        // 2. Ganti fungsi renderPrograms Anda dengan yang ini
+        function renderPrograms(filterCat) {
+            // Jika ada parameter kategori baru yang masuk, update state-nya
+            if (filterCat !== undefined) {
+                kategoriSaatIni = filterCat;
+            }
+        
             const container = document.getElementById('program-list-container');
-            const activePrograms = appPrograms.filter(p => p.status === "Aktif");
-            const filtered = filter === 'Semua' ? activePrograms : activePrograms.filter(p => p.kategori === filter);
+            
+            // Normalisasi waktu hari ini untuk cek deadline
+            const sekarang = new Date();
+            sekarang.setHours(0, 0, 0, 0);
+        
+            // Filter Gabungan yang Benar
+            const filtered = appPrograms.filter(p => {
+                // --- 1. FILTER UTAMA (VISIBILITAS) ---
+                // Jika program disembunyikan admin (Nonaktif), langsung buang dari daftar
+                if (p.status !== 'Aktif') return false;
+        
+                // --- 2. FILTER KATEGORI (Infaq, Wakaf, dll) ---
+                const matchKategori = (kategoriSaatIni === 'Semua') ? true : (p.kategori === kategoriSaatIni);
+                if (!matchKategori) return false;
+        
+                // --- 3. CEK DEADLINE (Untuk menentukan Berlangsung / Berakhir) ---
+                let isBerakhir = false;
+                if (p.deadline) {
+                    const batasWaktu = new Date(p.deadline);
+                    batasWaktu.setHours(0, 0, 0, 0);
+                    
+                    // Jika hari ini sudah melewati deadline (atau pas hari H jika <= 0)
+                    if (batasWaktu.getTime() - sekarang.getTime() <= 0) {
+                        isBerakhir = true;
+                    }
+                }
+        
+                // --- 4. COCOKKAN DENGAN TAB WAKTU (Berlangsung / Berakhir) ---
+                if (waktuSaatIni === 'semua') return true;
+                if (waktuSaatIni === 'berlangsung') return !isBerakhir; // Tampilkan yang belum lewat deadline
+                if (waktuSaatIni === 'berakhir') return isBerakhir;     // Tampilkan yang sudah lewat deadline
+            });
             
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="text-center bg-white p-6 rounded-2xl border border-slate-100"><p class="text-xs text-slate-400 italic font-medium">Belum ada program di kategori ${filter}</p></div>`;
+                container.innerHTML = `<div class="text-center bg-white p-6 rounded-2xl border border-slate-100"><p class="text-xs text-slate-400 italic font-medium">Belum ada program di kategori ini</p></div>`;
                 return;
             }
-
+        
             container.innerHTML = filtered.map(p => {
                 const pct = p.target > 0 ? Math.min(Math.round((p.terkumpul / p.target) * 100), 100) : 0;
+                
+                // (Isi HTML ini persis sama dengan kode asli Anda)
                 return `
                 <div onclick="goToDonasi('${p.id}')" class="bg-white rounded-2xl p-4 flex flex-col gap-3 shadow-sm border border-slate-100 hover:shadow-md hover:border-emerald-300 transition-all duration-300 cursor-pointer group">
                     
@@ -1157,13 +1250,13 @@
                             ` : ''}
                         </div>
                     </div>
-
+        
                     <div class="w-full pt-3 border-t border-slate-100">
                         <div class="flex justify-between items-center mb-3">
                             ${p.unitPrice > 0 ? `<span class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-200 text-[10px] font-bold text-amber-700 rounded-md shadow-sm"><i class="ph-fill ph-tag"></i> Mulai ${fRupiah(p.unitPrice)} / porsi</span>` : '<div></div>'}
                             <span class="text-[10px] text-slate-400 font-bold">${t('target')}: <b class="text-slate-600">${fRupiah(p.target)}</b></span>
                         </div>
-
+        
                         <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden mb-2">
                             <div class="bg-primary h-full" style="width: ${pct}%"></div>
                         </div>
@@ -1171,7 +1264,7 @@
                             <div class="text-[10px] text-slate-500 flex items-center gap-1.5">
                                 <span class="flex items-center gap-0.5"><i class="ph-fill ph-users text-emerald-500 text-[11px]"></i> ${t('donatur')}: <b>${p.jumlahDonatur || 0}</b></span>
                                 <span class="text-slate-300">•</span> 
-                                <span>${t('terkumpul')}: <b class="text-emerald-600">${fRupiah(p.terkumpul)}</b></span>
+                                <span>${t('terkumpul')}: <b class="text-emerald-600 text-[13px]">${fRupiah(p.terkumpul)}</b></span>
                             </div>
                             <span class="text-[10px] font-bold text-primary">${pct}%</span>
                         </div>
@@ -1181,6 +1274,27 @@
                     </div>
                 </div>`;
             }).join('');
+        }
+        
+        // 3. Tambahkan fungsi baru ini tepat di bawah renderPrograms
+        function setFilterWaktu(jenisFilter) {
+            waktuSaatIni = jenisFilter;
+            
+            // Ubah gaya tombol filter Waktu
+            const tombol = ['berlangsung', 'berakhir', 'semua'];
+            tombol.forEach(t => {
+                const elemen = document.getElementById(`btn-filter-${t}`);
+                if (!elemen) return;
+        
+                if (t === jenisFilter) {
+                    elemen.className = "px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-emerald-500 text-white shadow-[0_4px_10px_rgba(16,185,129,0.3)] flex-shrink-0";
+                } else {
+                    elemen.className = "px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-slate-100 text-slate-500 hover:bg-slate-200 flex-shrink-0";
+                }
+            });
+        
+            // Panggil ulang render (tanpa parameter agar menggunakan kategoriSaatIni)
+            renderPrograms(); 
         }
 
         function filterProgram(cat) {
@@ -1630,6 +1744,8 @@
             document.getElementById('quick-nominal').classList.add('hidden');
             document.getElementById('quick-unit').classList.add('hidden');                    
             currentTrxId = null;
+
+            pilihMetodePembayaran('transfer');
 
             // Reset status toggle anonim
             const toggle = document.getElementById('toggle-anonim');
@@ -2352,7 +2468,8 @@
                 alamatPonpes: "Jln. Lintas Timur Km. 36 Indralaya, Kab. Ogan Ilir, Sumatera Selatan",
                 followSosmed: "Follow Media Sosial Kami",
                 navBeranda: "Beranda",
-                navDonasi: "Donasi",
+                navDonatur: "Donatur", // Tambahkan ini
+                navDonasi: "Donasi",   // Tambahkan ini
                 navLaporan: "Laporan",
                 navProfil: "Profil",
                 hargaUnit: "Harga per Porsi",
@@ -2463,7 +2580,8 @@
                 alamatPonpes: "Jln. Lintas Timur Km. 36 Indralaya, Ogan Ilir Regency, South Sumatra",
                 followSosmed: "Follow Our Social Media",
                 navBeranda: "Home",
-                navDonasi: "Donate",
+                navDonatur: "Donors",  // Terjemahan Inggris untuk Donatur
+                navDonasi: "Donate",   // Terjemahan Inggris untuk Donasi
                 navLaporan: "Reports",
                 navProfil: "Profile",
                 hargaUnit: "Price per Portion",
@@ -2607,23 +2725,11 @@
         });  
 
         // --- SISTEM PEMBACA URL (MENCEGAH KEMBALI KE BERANDA SAAT REFRESH) ---
-                function bacaUrlSaatIni() {
+        function bacaUrlSaatIni() {
             const path = window.location.pathname.substring(1); // Ambil kata setelah garis miring (/)
             const menuUtama = ['beranda', 'donasi', 'laporan', 'kontak', 'admin'];
             
             if (menuUtama.includes(path)) {
-                // --- PROTEKSI: /admin wajib login, tolak akses langsung ---
-                if (path === 'admin' && !isAdmin) {
-                    window.history.replaceState({}, '', '/beranda');
-                    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                    document.getElementById('view-beranda').classList.add('active');
-                    const navBeranda = document.getElementById('nav-beranda');
-                    if (navBeranda) navBeranda.classList.add('active');
-                    openModalLogin();
-                    return;
-                }
-
                 // Paksa pindah tampilan tanpa pushState lagi
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -2650,7 +2756,7 @@
             
             if (selisih <= 0) return "Program Berakhir";
             
-            const hari = Math.floor(selisih / (1000 * 60 * 60 * 24));
+            const hari = Math.ceil(selisih / (1000 * 60 * 60 * 24));
             return hari + " hari tersisa";
         } 
 
@@ -2680,10 +2786,10 @@
 
             // LOGIKA FILTER
             if (sortBy === 'terbaru') {
-                donors = donors.slice(-10).reverse(); // 10 data terakhir masuk
+                donors = donors.slice(-20).reverse(); // 20 data terakhir masuk
             } else if (sortBy === 'terbesar') {
-                // Urutkan nominal dari besar ke kecil, lalu ambil 10 teratas
-                donors = [...donors].sort((a, b) => Number(b.jumlah) - Number(a.jumlah)).slice(0, 10);
+                // Urutkan nominal dari besar ke kecil, lalu ambil 15 teratas
+                donors = [...donors].sort((a, b) => Number(b.jumlah) - Number(a.jumlah)).slice(0, 15);
             }
 
             if(donors.length === 0) {
@@ -2735,7 +2841,71 @@
                         </div>
                     </div>`;
             }).join('');
-        }                          
+        }
+        function scrollToDonatur() {
+            // Pastikan diarahkan ke tab Beranda terlebih dahulu
+            if (!document.getElementById('view-beranda').classList.contains('active')) {
+                router('beranda');
+            }
+            
+            // Beri sedikit jeda agar DOM selesai dirender, lalu scroll ke bagian donatur
+            setTimeout(() => {
+                const donaturSection = document.getElementById('section-donatur');
+                if (donaturSection) {
+                    donaturSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 150);
+        }
+        // Default filter saat pertama kali web dibuka
+        let filterProgramSaatIni = 'berlangsung'; 
+        
+        // Ganti fungsi setFilterProgram lama Anda dengan ini:
+        function setFilterProgram(jenisFilter) {
+            // Update variabel global yang dipakai oleh renderPrograms
+            waktuSaatIni = jenisFilter; 
+            
+            // Daftar semua tombol filter waktu
+            const tombol = ['berlangsung', 'berakhir', 'semua'];
+            
+            tombol.forEach(t => {
+                const elemen = document.getElementById(`btn-filter-${t}`);
+                if (!elemen) return;
+        
+                if (t === jenisFilter) {
+                    // Gaya saat tombol aktif (Warna Hijau)
+                    elemen.className = "px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-emerald-500 text-white shadow-[0_4px_10px_rgba(16,185,129,0.3)] flex-shrink-0";
+                } else {
+                    // Gaya saat tombol tidak aktif (Warna Abu-abu)
+                    elemen.className = "px-4 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 bg-slate-100 text-slate-500 hover:bg-slate-200 flex-shrink-0";
+                }
+            });
+        
+            // Panggil ulang fungsi render untuk menerapkan filter
+            renderPrograms(); 
+        }
+        function pilihMetodePembayaran(metode) {
+            const btnTransfer = document.getElementById('btn-metode-transfer');
+            const btnQris = document.getElementById('btn-metode-qris');
+            const boxTransfer = document.getElementById('metode-transfer');
+            const boxQris = document.getElementById('metode-qris');
+
+            // Class untuk tombol gaya Nebula Hijau (Aktif)
+            const styleAktif = "flex-1 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white font-bold py-3 rounded-xl shadow-[0_8px_20px_-6px_rgba(16,185,129,0.6)] active:scale-95 transition-all text-sm flex items-center justify-center gap-2 border-2 border-transparent";
+            // Class untuk tombol gaya Abu-abu (Tidak Aktif)
+            const styleNonAktif = "flex-1 bg-slate-50 text-slate-400 font-bold py-3 rounded-xl active:scale-95 transition-all text-sm flex items-center justify-center gap-2 border-2 border-slate-200 hover:bg-slate-100 hover:text-slate-600";
+
+            if (metode === 'transfer') {
+                btnTransfer.className = styleAktif;
+                btnQris.className = styleNonAktif;
+                boxTransfer.classList.remove('hidden');
+                boxQris.classList.add('hidden');
+            } else if (metode === 'qris') {
+                btnQris.className = styleAktif;
+                btnTransfer.className = styleNonAktif;
+                boxQris.classList.remove('hidden');
+                boxTransfer.classList.add('hidden');
+            }
+        }        
     </script>
 </body>
 </html>
